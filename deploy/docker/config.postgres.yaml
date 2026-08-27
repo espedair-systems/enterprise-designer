@@ -1,0 +1,25 @@
+server:
+  host: "0.0.0.0"
+  port: 8082
+  read_timeout_seconds: 30
+  write_timeout_seconds: 30
+  idle_timeout_seconds: 120
+
+database:
+  driver: "postgres"
+  dsn: "postgres://ba:ba_secret@localhost:5432/ba?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 5
+  conn_max_lifetime_minutes: 60
+
+telemetry:
+  enabled: true
+  metrics_path: "/metrics"
+  log_level: "info"
+  service_name: "business-artist"
+
+app:
+  title: "Business Artist"
+  version: "1.0.0"
+  environment: "production"
+  default_workspace: "ws-ba-default"

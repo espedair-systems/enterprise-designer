@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  ba-server:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    container_name: ba-server
+    ports:
+      - "8082:8082"
+    environment:
+      - BA_SERVER_PORT=8082
+      - BA_DB_DSN=postgres://ba:ba_secret@postgres:5432/ba?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ba-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=ba
+      - POSTGRES_PASSWORD=ba_secret
+      - POSTGRES_DB=ba
+    volumes:
+      - ba_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ba -d ba"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  pgweb:
+    image: sosedoff/pgweb:latest
+    container_name: ba-pgweb
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=postgres://ba:ba_secret@postgres:5432/ba?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  ba_pgdata:

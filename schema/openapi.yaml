@@ -1,0 +1,54 @@
+openapi: 3.0.3
+info:
+  title: Business Artist REST API
+  description: Authoritative BIZBOK & TOGAF Business Architecture Platform API
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      summary: Health check and platform status
+      responses:
+        '200':
+          description: OK
+  /capabilities:
+    get:
+      summary: List capabilities in workspace
+      parameters:
+        - name: workspace_id
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of capabilities
+    post:
+      summary: Create or update capability
+      responses:
+        '200':
+          description: Saved capability
+  /valuestreams:
+    get:
+      summary: List value streams and stages
+      responses:
+        '200':
+          description: List of value streams
+  /processes:
+    get:
+      summary: List business processes, SIPOC and RACI
+      responses:
+        '200':
+          description: List of processes
+  /strategy/traceability:
+    get:
+      summary: Get strategy-to-execution traceability matrix
+      responses:
+        '200':
+          description: Traceability matrix
+  /analytics/dashboard:
+    get:
+      summary: Executive business architecture KPIs
+      responses:
+        '200':
+          description: Dashboard metrics

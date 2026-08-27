@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BusinessCapability",
+  "type": "object",
+  "required": ["id", "workspace_id", "code", "name", "level", "pace_layer", "strategic_importance"],
+  "properties": {
+    "id": { "type": "string" },
+    "workspace_id": { "type": "string" },
+    "code": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "parent_id": { "type": ["string", "null"] },
+    "level": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "pace_layer": { "type": "string", "enum": ["System of Innovation", "System of Differentiation", "System of Record"] },
+    "strategic_importance": { "type": "string", "enum": ["Core Advantage", "Differentiating", "Market Parity", "Commodity"] },
+    "current_maturity": { "type": "number", "minimum": 1.0, "maximum": 5.0 },
+    "target_maturity": { "type": "number", "minimum": 1.0, "maximum": 5.0 },
+    "investment_priority": { "type": "string" },
+    "risk_score": { "type": "number" },
+    "business_owner": { "type": "string" }
+  }
+}

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  ba-postgres:
+    image: postgres:16-alpine
+    container_name: ba-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ba
+      POSTGRES_PASSWORD: ba_secret
+      POSTGRES_DB: ba
+    ports:
+      - "5432:5432"
+    volumes:
+      - ba_pg_data:/var/lib/postgresql/data
+      - ../../db/migrations/000001_init_business_artist.up.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ba -d ba"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  ba_pg_data:
