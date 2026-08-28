@@ -1,0 +1,29 @@
+# ==============================================================================
+# BGE-Large-EN-v1.5 Profile Configuration (1024 Dimensions)
+# ==============================================================================
+profile: APRA-Sources
+
+# Filtered list of file extensions to index
+allowed_extensions:
+  - pdf
+  - docx
+  - xlsx
+  - xls
+  - xml
+  - xsd
+  - sql
+
+# Target watch directory
+watch_dir: .
+
+# Engine parameters
+model_name: bge-large-en-v1.5
+model_path: ~/.mcp-ag/models/bge-large-en-v1.5/model.onnx
+tokenizer_path: ~/.mcp-ag/models/bge-large-en-v1.5/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_bge_large_lancedb
+dimension: Dim1024
+log_level: info
+
+# Host LLM Model Configuration (Local RTX 3090 GGUF)
+llm_name: Llama-3.1-8B-Instruct
+llm_model_path: ~/.mcp-ag/models/Llama-3.1-8B-Instruct/Meta-Llama-3.1-8B-Instruct-Q8_0.gguf

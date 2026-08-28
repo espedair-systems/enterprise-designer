@@ -1,0 +1,81 @@
+{
+  "id": "survey-vendor-rfp-2026",
+  "app_id": "fleet-logistics",
+  "title": "Strategic Vendor RFP / RFQ Evaluation & Due Diligence",
+  "slug": "vendor-rfp-evaluation",
+  "version": "1.1.0",
+  "category": "rfp_rfq",
+  "status": "published",
+  "description": "Comprehensive procurement evaluation of enterprise software vendors, SLA commitments, disaster recovery, and compliance.",
+  "sections": [
+    {
+      "id": "sec-rfp-1",
+      "title": "Vendor Identity & Corporate Profile",
+      "description": "Legal entity details, primary contacts, and corporate credentials.",
+      "sort_order": 1,
+      "questions": [
+        {
+          "id": "rfp-101",
+          "code": "VEN-01",
+          "text": "Legal Corporate Name of Bidding Vendor",
+          "question_type": "text",
+          "required": true,
+          "sort_order": 1
+        },
+        {
+          "id": "rfp-102",
+          "code": "VEN-02",
+          "text": "Vendor DUNS / Corporate Registration Number",
+          "question_type": "text",
+          "required": true,
+          "sort_order": 2
+        }
+      ]
+    },
+    {
+      "id": "sec-rfp-2",
+      "title": "SLA Commitments & Technical Architecture",
+      "description": "Availability guarantees, RTO/RPO limits, and disaster recovery architectures.",
+      "sort_order": 2,
+      "questions": [
+        {
+          "id": "rfp-201",
+          "code": "SLA-01",
+          "text": "Guaranteed Monthly Cloud Uptime SLA Tier",
+          "question_type": "dropdown",
+          "required": true,
+          "sort_order": 1,
+          "reference_data_key": "sla_availability_tiers",
+          "options": [
+            { "id": "sla-49", "label": "99.99% Availability (Tier 4 Fault Tolerant)", "value": "99_99", "score": 100 },
+            { "id": "sla-39", "label": "99.95% Availability (Tier 3 High Availability)", "value": "99_95", "score": 85 },
+            { "id": "sla-3", "label": "99.9% Availability (Tier 2 Standard)", "value": "99_9", "score": 70 },
+            { "id": "sla-below", "label": "< 99.5% Availability", "value": "below_99_5", "score": 20 }
+          ]
+        },
+        {
+          "id": "rfp-202",
+          "code": "SLA-02",
+          "text": "Maximum Recovery Time Objective (RTO) in Hours",
+          "question_type": "number",
+          "required": true,
+          "sort_order": 2,
+          "help_text": "Maximum elapsed time allowable between service disruption and restoration."
+        },
+        {
+          "id": "rfp-203",
+          "code": "SLA-03",
+          "text": "Overall Architecture Maturity & Disaster Recovery Rating",
+          "question_type": "rating",
+          "required": true,
+          "sort_order": 3,
+          "rating_config": {
+            "scaleType": "1-5",
+            "lowLabel": "Single Point of Failure",
+            "highLabel": "Active-Active Multi-Region"
+          }
+        }
+      ]
+    }
+  ]
+}

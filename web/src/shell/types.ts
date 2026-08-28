@@ -1,12 +1,71 @@
-export type CanvasMode = 'visual_canvas' | 'er_modeler' | 'lineage_dag' | 'sql_editor' | 'workflow_graph' | 'form_designer';
+export type CanvasMode =
+  | 'executive_dashboard'
+  | 'dashboard_projects'
+  | 'recent_activity'
+  | 'global_search'
+  | 'page_registry'
+  | 'entity_registry'
+  // Behavioral Diagrams (7)
+  | 'use_case'
+  | 'activity_diagram'
+  | 'state_machine'
+  | 'sequence_diagram'
+  | 'communication_diagram'
+  | 'interaction_overview_diagram'
+  | 'timing_diagram'
+  // Structural Diagrams (7)
+  | 'class_diagram'
+  | 'object_diagram'
+  | 'component_diagram'
+  | 'deployment_diagram'
+  | 'package_diagram'
+  | 'composite_structure_diagram'
+  | 'profile_diagram'
+  // Visual Studio & Modeler
+  | 'visual_canvas'
+  | 'ui_sketch'
+  | 'er_modeler'
+  | 'lineage_dag'
+  | 'sql_editor'
+  | 'workflow_graph'
+  | 'project_scaffold'
+  | 'form_designer'
+  // Q Designer Subsystem (DES_BASE.quest_*)
+  | 'q_registry'
+  | 'q_designer'
+  | 'q_bank'
+  | 'q_reference'
+  | 'q_responses'
+  | 'q_guidance'
+  // Schema & OpenAPI Designer Subsystem (DES_BASE.schema_*)
+  | 'schema_registry'
+  | 'schema_designer'
+  | 'schema_graph'
+  | 'openapi_manager'
+  | 'api_console'
+  | 'dialect_catalog';
+
+export type DesignerDomainMode =
+  | 'dashboard'
+  | 'projects'
+  | 'ui_designer'
+  | 'data_designer'
+  | 'agent_designer'
+  | 'q_designer'
+  | 'schema_designer';
 
 export interface RailItem {
   id: string;
   icon: string;
   label: string;
+  description?: string;
+  category?: string;
+  section?: string;
   targetSidebar?: string;
   targetCanvas?: CanvasMode;
   badge?: number | string;
+  alignRight?: boolean;
+  isContextual?: boolean;
 }
 
 export interface RailSlotConfig {

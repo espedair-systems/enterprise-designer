@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-artist.inspire/schema/workspace-repository-graph.schema.json",
+  "title": "Enterprise Agent Workspace Repository Graph Schema",
+  "description": "Canonical schema definition for multi-project workspace topologies, repository directories, and verified architectural dependencies in PostgreSQL EAA_BASE.",
+  "type": "object",
+  "required": ["version", "projects", "dependencies"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URI to this JSON Schema definition"
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema semantic version",
+      "enum": ["1.0.0"]
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp when graph was exported or generated",
+      "format": "date-time"
+    },
+    "projects": {
+      "type": "array",
+      "description": "List of workspace repositories and codebases registered in the CMS",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "repo_path", "code_type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the project workspace (e.g. proj-enterprise-agent)",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable display name of the repository",
+            "minLength": 1
+          },
+          "repo_path": {
+            "type": "string",
+            "description": "Filesystem path to the local repository directory"
+          },
+          "code_type": {
+            "type": "string",
+            "description": "Primary programming language / tech stack of the repository",
+            "enum": ["go", "rust", "java", "python", "typescript", "clojure", "sql", "other"]
+          },
+          "github_repo": {
+            "type": "string",
+            "description": "Optional GitHub / remote git repository clone URL"
+          },
+          "github_branch": {
+            "type": "string",
+            "description": "Target git branch name (default: main)",
+            "default": "main"
+          },
+          "output_dir": {
+            "type": "string",
+            "description": "Directory for generated architectural models and fact sheets"
+          },
+          "metrics_dir": {
+            "type": "string",
+            "description": "Directory for DuckDB/LanceDB forensic metrics sinks"
+          },
+          "file_count": {
+            "type": "integer",
+            "description": "Scanned source file count",
+            "minimum": 0,
+            "default": 0
+          },
+          "last_scanned_at": {
+            "type": "string",
+            "description": "ISO timestamp of the most recent directory scan",
+            "format": "date-time"
+          },
+          "dataset_status": {
+            "type": "string",
+            "description": "Status of dataset indexing and DuckDB readiness"
+          },
+          "position_x": {
+            "type": "number",
+            "description": "X coordinate on the React Flow CMS canvas"
+          },
+          "position_y": {
+            "type": "number",
+            "description": "Y coordinate on the React Flow CMS canvas"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Cross-repository architectural relationships and communication protocols",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_repo_id", "target_repo_id", "connection_type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the dependency connection",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "source_repo_id": {
+            "type": "string",
+            "description": "ID of the source/caller project workspace",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "target_repo_id": {
+            "type": "string",
+            "description": "ID of the target/callee project workspace",
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "connection_type": {
+            "type": "string",
+            "description": "Classification of the architectural interface",
+            "enum": ["api", "mcp", "library", "grpc", "inspired_by"]
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol specification (e.g. REST / SSE JSON, JSON-RPC, FactSheet Metamodel)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human explanation of the interaction contract"
+          },
+          "evidence_file": {
+            "type": "string",
+            "description": "Source code file demonstrating the call site or import"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

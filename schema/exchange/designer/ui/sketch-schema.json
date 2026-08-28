@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://espedair.systems/schemas/designer/sketch-schema.json",
+  "title": "EnterpriseDesignerSketchDocument",
+  "description": "JSON Schema specification for Enterprise Designer Wireframe & Sketch canvas layouts.",
+  "type": "object",
+  "required": ["version", "title", "target", "elements", "updated_at"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version definition",
+      "default": "1.0.0"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title of the wireframe sketch"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes or requirements for this wireframe sketch"
+    },
+    "target": {
+      "type": "string",
+      "description": "Target runtime environment for this wireframe",
+      "enum": ["react_web", "bubbletea_tui", "custom"]
+    },
+    "canvas": {
+      "type": "object",
+      "description": "Canvas dimensions and grid configuration",
+      "properties": {
+        "width": { "type": "number", "default": 1400 },
+        "height": { "type": "number", "default": 900 },
+        "gridSize": { "type": "number", "default": 20 }
+      }
+    },
+    "elements": {
+      "type": "array",
+      "description": "List of wireframe components and frames positioned on the canvas",
+      "items": {
+        "$ref": "#/definitions/SketchElement"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Author, project, and database persistence tags",
+      "properties": {
+        "author": { "type": "string" },
+        "app_id": { "type": "string" },
+        "database_schema": { "type": "string", "default": "DES_BASE" }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "definitions": {
+    "SketchElement": {
+      "type": "object",
+      "required": ["id", "type", "title", "x", "y", "width", "height"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the sketch element"
+        },
+        "type": {
+          "type": "string",
+          "description": "Component category or frame type",
+          "enum": ["frame", "card", "button", "input", "table", "text", "badge", "nav_list", "tui_box", "status_bar"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Display label or component title"
+        },
+        "x": {
+          "type": "number",
+          "description": "X coordinate relative to canvas top-left in pixels"
+        },
+        "y": {
+          "type": "number",
+          "description": "Y coordinate relative to canvas top-left in pixels"
+        },
+        "width": {
+          "type": "number",
+          "description": "Element width in pixels"
+        },
+        "height": {
+          "type": "number",
+          "description": "Element height in pixels"
+        },
+        "color": {
+          "type": "string",
+          "description": "Tailwind CSS styling or color theme class"
+        },
+        "props": {
+          "type": "object",
+          "description": "Optional component-specific properties or mock data",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

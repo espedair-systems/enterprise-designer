@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-artist.inspire/schema/tap-registry.schema.json",
+  "title": "TAP Registry Import Schema",
+  "description": "Schema for loading TAP Registry workbook extracts from TRM_dump_140826.xlsx (sheet: Page 1). Supports normalized JSON rows while preserving original workbook column names.",
+  "type": "object",
+  "required": ["metadata", "records"],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["sourceFile", "sheetName", "exportedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "sourceFile": {
+          "type": "string",
+          "description": "Original TAP workbook filename."
+        },
+        "sheetName": {
+          "type": "string",
+          "const": "Page 1",
+          "description": "Worksheet name in the TAP dump."
+        },
+        "exportedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the workbook was exported/converted to JSON."
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "description": "Rows from TAP Registry, one object per TRM entry.",
+      "items": {
+        "$ref": "#/$defs/tapRecord"
+      }
+    }
+  },
+  "$defs": {
+    "excelDateOrIso": {
+      "description": "Excel serial date/time or ISO 8601 string.",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "format": "date-time" },
+        { "type": "string", "format": "date" }
+      ]
+    },
+    "tapRecord": {
+      "type": "object",
+      "required": ["Name"],
+      "additionalProperties": false,
+      "properties": {
+        "Name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "TAP item name."
+        },
+        "Publisher": {
+          "type": "string"
+        },
+        "Business Justification": {
+          "type": "string"
+        },
+        "TRM phase": {
+          "type": "string",
+          "description": "Registry phase (for example Approved, Approved with Constraints)."
+        },
+        "What are the constraints?": {
+          "type": "string"
+        },
+        "Tell us more about the Constraints for this software?": {
+          "type": "string"
+        },
+        "Owner": {
+          "type": "string"
+        },
+        "Status change date": {
+          "$ref": "#/$defs/excelDateOrIso"
+        },
+        "Category": {
+          "type": "string"
+        },
+        "Subcategory": {
+          "type": "string"
+        },
+        "TRM request": {
+          "type": "string"
+        },
+        "Software product": {
+          "type": "string"
+        },
+        "Type": {
+          "type": "string",
+          "description": "Expected values include Software, Hardware, or Service classifications."
+        },
+        "Updated by": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        },
+        "Hardware Product": {
+          "type": "string"
+        },
+        "Tags": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          ]
+        },
+        "Created": {
+          "$ref": "#/$defs/excelDateOrIso"
+        },
+        "Created by": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        },
+        "Investment direction": {
+          "type": "string"
+        },
+        "Is New Product": {
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "integer", "enum": [0, 1] },
+            { "type": "string", "enum": ["0", "1", "true", "false", "TRUE", "FALSE"] }
+          ]
+        },
+        "Lifecycle exist": {
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "integer", "enum": [0, 1] },
+            { "type": "string", "enum": ["0", "1", "true", "false", "TRUE", "FALSE"] }
+          ]
+        },
+        "Operating system": {
+          "type": "string"
+        },
+        "Other categories": {
+          "type": "string"
+        },
+        "Status approver": {
+          "type": "string"
+        },
+        "Updated": {
+          "$ref": "#/$defs/excelDateOrIso"
+        },
+        "Updates": {
+          "oneOf": [
+            { "type": "integer" },
+            { "type": "string" }
+          ]
+        }
+      }
+    }
+  }
+}

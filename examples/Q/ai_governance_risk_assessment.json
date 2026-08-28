@@ -1,0 +1,107 @@
+{
+  "id": "survey-ai-governance-2026",
+  "app_id": "fleet-logistics",
+  "title": "Enterprise AI Governance & Risk Assessment (EU AI Act & NIST AI RMF)",
+  "slug": "ai-governance-assessment",
+  "version": "1.0.0",
+  "category": "ai_governance",
+  "status": "published",
+  "description": "Evaluation of autonomous machine learning models for regulatory risk tiering, disparity/fairness testing, and human-in-the-loop oversight.",
+  "description_markdown": "### AI Regulatory Governance Protocol\nMandatory risk tiering and bias audit per EU AI Act Annex III and NIST AI Risk Management Framework.",
+  "sections": [
+    {
+      "id": "sec-ai-1",
+      "title": "Model Card & Regulatory Classification",
+      "description": "Model identification, dataset lineage, and risk tiering.",
+      "sort_order": 1,
+      "questions": [
+        {
+          "id": "ai-101",
+          "code": "AI-01",
+          "text": "Model Architecture & System Identifier",
+          "question_type": "text",
+          "required": true,
+          "sort_order": 1,
+          "help_text": "e.g. Telematics Predictive Anomaly Detector v3.4 (Transformer/LLM)"
+        },
+        {
+          "id": "ai-102",
+          "code": "AI-02",
+          "text": "Regulatory Risk Classification Tier (EU AI Act / NIST)",
+          "question_type": "single_choice",
+          "required": true,
+          "sort_order": 2,
+          "options": [
+            { "id": "tier-unacceptable", "label": "Unacceptable Risk (Prohibited AI Practice)", "value": "unacceptable", "score": 0 },
+            { "id": "tier-high", "label": "High Risk (Annex III Critical Infrastructure / Employment / Safety)", "value": "high_risk", "score": 40 },
+            { "id": "tier-limited", "label": "Limited Risk (Transparency / Chatbot Disclosures)", "value": "limited_risk", "score": 80 },
+            { "id": "tier-minimal", "label": "Minimal / Low Risk (Standard Analytical Models)", "value": "minimal_risk", "score": 100 }
+          ]
+        },
+        {
+          "id": "ai-103",
+          "code": "JUMP-AI-01",
+          "text": "Branch: If High Risk or Unacceptable, Jump to Mandatory Human Oversight & Fairness Testing",
+          "question_type": "logic_jump",
+          "required": false,
+          "sort_order": 3,
+          "logic_jump": {
+            "sourceQuestionId": "ai-102",
+            "sourceQuestionCode": "AI-02",
+            "operator": "equals",
+            "matchValue": "high_risk",
+            "action": "jump_page",
+            "targetPageIndex": 1,
+            "targetPageTitle": "Fairness, Safety & Human Oversight"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sec-ai-2",
+      "title": "Fairness, Safety & Human Oversight",
+      "description": "Evaluate bias mitigation, disparity ratios, and manual override capability.",
+      "sort_order": 2,
+      "questions": [
+        {
+          "id": "ai-201",
+          "code": "AI-03",
+          "text": "Human-in-the-Loop Override & Fallback Capability Level",
+          "question_type": "dropdown",
+          "required": true,
+          "sort_order": 1,
+          "options": [
+            { "id": "hitl-full", "label": "Full Human-in-the-Loop (All Decisions Require Human Approval)", "value": "full_hitl", "score": 100 },
+            { "id": "hitl-hotit", "label": "Human-on-the-Loop (Automated with Real-Time Interruption & Kill Switch)", "value": "hotit", "score": 85 },
+            { "id": "hitl-post", "label": "Human-in-Command (Post-facto Audit Sample Reviews)", "value": "post_audit", "score": 60 },
+            { "id": "hitl-none", "label": "Autonomous (No Manual Override Mechanism)", "value": "autonomous", "score": 10 }
+          ]
+        },
+        {
+          "id": "ai-202",
+          "code": "AI-04",
+          "text": "Model Disparity & Fairness Confidence Score (0 - 100%)",
+          "question_type": "slider",
+          "required": true,
+          "sort_order": 2,
+          "rating_config": {
+            "scaleType": "slider",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "lowLabel": "Significant Disparity (<80% Four-Fifths Rule)",
+            "highLabel": "Optimal Parity (100% Parity)"
+          }
+        },
+        {
+          "id": "ai-203",
+          "code": "AI-05",
+          "text": "Bias Mitigation Notes & Risk Officer Remarks",
+          "question_type": "textarea",
+          "required": false,
+          "sort_order": 3
+        }
+      ]
+    }
+  ]
+}

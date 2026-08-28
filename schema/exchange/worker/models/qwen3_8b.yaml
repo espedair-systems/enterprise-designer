@@ -1,0 +1,18 @@
+# ==============================================================================
+# Qwen3-Embedding-8B Profile Configuration (4096 Dimensions)
+# ==============================================================================
+profile: Full
+
+# Filtered list of file extensions to index
+allowed_extensions: null
+
+# Target watch directory
+watch_dir: .
+
+# Engine parameters
+model_name: Qwen3-Embedding-8B
+model_path: ~/.mcp-ag/models/Qwen3-Embedding-8B/model.onnx
+tokenizer_path: ~/.mcp-ag/models/Qwen3-Embedding-8B/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_qwen3_8b_lancedb
+dimension: Dim4096
+log_level: info

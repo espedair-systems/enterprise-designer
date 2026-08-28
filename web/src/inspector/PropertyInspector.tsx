@@ -21,8 +21,63 @@ export const PropertyInspector: React.FC<PropertyInspectorProps> = ({
   selectedWidgetId,
   onSelectWidget,
 }) => {
-  const { slots, updateSlots } = useLayout();
+  const { slots, updateSlots, canvasMode } = useLayout();
   const [activeTab, setActiveTab] = useState<'props' | 'layout' | 'events'>('props');
+
+  // Question Inspector for Q Designer
+  if (canvasMode === 'q_designer') {
+    return (
+      <div className="space-y-4 text-xs select-none">
+        <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-foreground">Question Specifications</span>
+            <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-primary text-primary-foreground">
+              DES_BASE
+            </span>
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            {selectedWidgetId ? `Active Item: ${selectedWidgetId}` : 'Select any question to inspect guidance and validation rules.'}
+          </p>
+        </div>
+
+        {selectedWidgetId ? (
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                Question Identifier
+              </label>
+              <div className="px-2.5 py-1.5 bg-background border border-border rounded-lg font-mono text-foreground font-semibold">
+                {selectedWidgetId}
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="block text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                Compliance & Guidance Scope
+              </label>
+              <div className="p-2.5 bg-background border border-border rounded-lg text-muted-foreground text-[11px] space-y-1">
+                <p>• ISO / Telematics Inspection Standard</p>
+                <p>• Millisecond Timestamp & Digital Sign-off</p>
+                <p>• Schema: <strong className="text-primary font-mono">DES_BASE.quest_questions</strong></p>
+              </div>
+            </div>
+
+            <div className="p-2.5 bg-muted/40 border border-border rounded-xl text-[10px] text-muted-foreground italic">
+              💡 Tip: Double-click the question card on the canvas to open the full Markdown & Options specifications editor.
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-48 text-center p-4 border border-dashed border-border rounded-xl">
+            <Sliders className="w-6 h-6 text-muted-foreground/50 mb-1.5" />
+            <p className="font-semibold text-foreground">No Question Selected</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Click any question on the canvas to view its audit guidance and validation bindings.
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const widgets = slots.canvas?.widgets || [];
   const selectedWidget = widgets.find((w) => w.id === selectedWidgetId);

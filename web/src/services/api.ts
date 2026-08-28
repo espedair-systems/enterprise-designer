@@ -345,6 +345,7 @@ export const api = {
     slug?: string;
     app_type?: string;
     description?: string;
+    status?: string;
     workspace_id?: string;
   }) =>
     fetchJSON<{ message: string; data: any }>(`${BASE_URL}/designer/apps`, {
@@ -359,6 +360,50 @@ export const api = {
     fetchJSON<{ message: string; data: any }>(`${BASE_URL}/designer/apps/${id}/layout`, {
       method: 'PUT',
       body: JSON.stringify(layout),
+    }),
+
+  updateDesignerApp: (id: string, payload: any) =>
+    fetchJSON<{ message: string; data: any }>(`${BASE_URL}/designer/apps/${id}`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  // UML Use Cases, Actors & Diagrams (uc_ and diag_ tables)
+  listUseCases: (appId: string) =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/apps/${appId}/usecases`),
+
+  saveUseCase: (appId: string, payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/apps/${appId}/usecases`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  deleteUseCase: (appId: string, useCaseId: string) =>
+    fetchJSON<{ status: string; id: string }>(`${BASE_URL}/designer/apps/${appId}/usecases/${useCaseId}`, {
+      method: 'DELETE',
+    }),
+
+  listActors: (appId: string) =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/apps/${appId}/actors`),
+
+  saveActor: (appId: string, payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/apps/${appId}/actors`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  deleteActor: (appId: string, actorId: string) =>
+    fetchJSON<{ status: string; id: string }>(`${BASE_URL}/designer/apps/${appId}/actors/${actorId}`, {
+      method: 'DELETE',
+    }),
+
+  getDiagramLayout: (appId: string) =>
+    fetchJSON<{ layout: any; elements: any[] }>(`${BASE_URL}/designer/apps/${appId}/diagrams`),
+
+  saveDiagramLayout: (appId: string, payload: { layout: any; elements: any[] }) =>
+    fetchJSON<{ status: string; elements: number; schema: string }>(`${BASE_URL}/designer/apps/${appId}/diagrams`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
     }),
 
   deleteDesignerApp: (id: string) =>
@@ -401,5 +446,132 @@ export const api = {
     fetchJSON<{ nodes: any[]; edges: any[]; blast_radius_enabled: boolean }>(
       `${BASE_URL}/schematics/lineage`
     ),
+
+  // Change Requests (CR)
+  createCR: (payload: {
+    title: string;
+    content: string;
+    description?: string;
+    view_id?: string;
+    app_name?: string;
+  }) =>
+    fetchJSON<{
+      message: string;
+      filename: string;
+      file_path: string;
+      index: number;
+    }>(`${BASE_URL}/cr`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  listCRs: () =>
+    fetchJSON<{
+      data: Array<{
+        filename: string;
+        file_path: string;
+        index: number;
+        title: string;
+        mod_time: string;
+        size_bytes: number;
+      }>;
+      cr_dir: string;
+      count: number;
+    }>(`${BASE_URL}/cr`),
+
+  // Q Designer Subsystem (DES_BASE.quest_*)
+  listQuestSurveys: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/q/surveys`),
+
+  getQuestSurvey: (id: string) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/surveys/${id}`),
+
+  createQuestSurvey: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/surveys`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  updateQuestSurvey: (id: string, payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/surveys/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  deleteQuestSurvey: (id: string) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/surveys/${id}`, {
+      method: 'DELETE',
+    }),
+
+  listQuestQuestionBank: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/q/question-bank`),
+
+  createQuestQuestionBankItem: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/question-bank`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  listQuestReferenceData: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/q/reference-data`),
+
+  createQuestReferenceData: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/reference-data`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  listQuestSubmissions: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/q/submissions`),
+
+  createQuestSubmission: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/q/submissions`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  // Schema & OpenAPI Designer Subsystem (DES_BASE.schema_*)
+  listSchemas: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/schemas`),
+
+  getSchema: (id: string) =>
+    fetchJSON<any>(`${BASE_URL}/designer/schemas/${id}`),
+
+  createSchema: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/schemas`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  updateSchema: (id: string, payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/schemas/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  deleteSchema: (id: string) =>
+    fetchJSON<any>(`${BASE_URL}/designer/schemas/${id}`, {
+      method: 'DELETE',
+    }),
+
+  listOpenAPIEndpoints: () =>
+    fetchJSON<any[]>(`${BASE_URL}/designer/openapi/endpoints`),
+
+  createOpenAPIEndpoint: (payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/openapi/endpoints`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  updateOpenAPIEndpoint: (id: string, payload: any) =>
+    fetchJSON<any>(`${BASE_URL}/designer/openapi/endpoints/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }),
+
+  deleteOpenAPIEndpoint: (id: string) =>
+    fetchJSON<any>(`${BASE_URL}/designer/openapi/endpoints/${id}`, {
+      method: 'DELETE',
+    }),
 };
 

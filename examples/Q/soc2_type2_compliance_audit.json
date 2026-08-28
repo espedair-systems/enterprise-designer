@@ -1,0 +1,113 @@
+{
+  "id": "survey-soc2-type2-2026",
+  "app_id": "fleet-logistics",
+  "title": "SOC 2 Type II Compliance & Security Control Audit",
+  "slug": "soc2-type2-audit",
+  "version": "2.1.0",
+  "category": "security_soc2",
+  "status": "published",
+  "description": "Annual SOC 2 Trust Services Criteria evaluation covering logical access, MFA, change control, and patch management.",
+  "description_markdown": "### SOC 2 Type II Security Assessment Protocol\nAudits controls aligned to AICPA Trust Services Criteria (CC6.1, CC6.2, CC7.1, CC8.1).",
+  "sections": [
+    {
+      "id": "sec-soc2-1",
+      "title": "Audit Scope & Target System Boundary",
+      "description": "Define evaluate system boundaries, environment tier, and VPC isolation.",
+      "sort_order": 1,
+      "questions": [
+        {
+          "id": "soc-101",
+          "code": "CC6-01",
+          "text": "Target Application / Infrastructure Cluster Name",
+          "question_type": "text",
+          "required": true,
+          "sort_order": 1,
+          "help_text": "e.g. Core Telematics Ingestion API & Kubernetes EKS Cluster"
+        },
+        {
+          "id": "soc-102",
+          "code": "CC6-02",
+          "text": "Environment Classification Tier",
+          "question_type": "dropdown",
+          "required": true,
+          "sort_order": 2,
+          "reference_data_key": "deployment_environments",
+          "options": [
+            { "id": "env-1", "label": "Production Tier 1 (Customer Facing)", "value": "prod_t1", "score": 10 },
+            { "id": "env-2", "label": "Staging / Pre-Prod", "value": "staging", "score": 8 },
+            { "id": "env-3", "label": "Internal Development & Sandbox", "value": "dev", "score": 5 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec-soc2-2",
+      "title": "Logical Access & Identity Management (CC6)",
+      "description": "Verification of SSO, Hardware Token MFA, and automated account offboarding.",
+      "sort_order": 2,
+      "questions": [
+        {
+          "id": "soc-201",
+          "code": "CC6-03",
+          "text": "Are Hardware-backed Multi-Factor Authentication (MFA / FIDO2) enforced for all privileged administrators?",
+          "question_type": "single_choice",
+          "required": true,
+          "sort_order": 1,
+          "options": [
+            { "id": "mfa-yes", "label": "100% Enforced via Okta / Entra ID with FIDO2 Hardware Keys", "value": "enforced_fido2", "score": 100 },
+            { "id": "mfa-app", "label": "Enforced via Authenticator App (TOTP)", "value": "enforced_totp", "score": 80 },
+            { "id": "mfa-no", "label": "Partial / Non-Compliant", "value": "non_compliant", "score": 0 }
+          ]
+        },
+        {
+          "id": "soc-202",
+          "code": "CC6-04",
+          "text": "Privileged User Access Recertification Frequency",
+          "question_type": "dropdown",
+          "required": true,
+          "sort_order": 2,
+          "options": [
+            { "id": "recert-monthly", "label": "Monthly Automated Recertification", "value": "monthly", "score": 100 },
+            { "id": "recert-quarterly", "label": "Quarterly Manager Sign-off", "value": "quarterly", "score": 80 },
+            { "id": "recert-annual", "label": "Annual Review Only", "value": "annual", "score": 40 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec-soc2-3",
+      "title": "Change Management & Patch SLA Compliance (CC7 & CC8)",
+      "description": "Vulnerability triage SLAs and mandatory peer review release gates.",
+      "sort_order": 3,
+      "questions": [
+        {
+          "id": "soc-301",
+          "code": "CC7-01",
+          "text": "Critical Vulnerability Remediation SLA Compliance (Severity >= 9.0 in < 48 Hours)",
+          "question_type": "rating",
+          "required": true,
+          "sort_order": 1,
+          "rating_config": {
+            "scaleType": "1-5",
+            "lowLabel": "Frequent SLA Breaches",
+            "highLabel": "100% On-Time Patching"
+          }
+        },
+        {
+          "id": "soc-302",
+          "code": "CC8-01",
+          "text": "Mandatory CI/CD Production Release Security Gates Enforced",
+          "question_type": "multiple_choice",
+          "required": true,
+          "sort_order": 2,
+          "options": [
+            { "id": "gate-1", "label": "2+ Senior Peer Code Review Approvals", "value": "peer_review", "score": 25 },
+            { "id": "gate-2", "label": "Automated SAST & Container Vulnerability Scans Block on High/Critical", "value": "sast_block", "score": 25 },
+            { "id": "gate-3", "label": "Automated Unit & Integration Test Coverage > 80%", "value": "test_cov", "score": 25 },
+            { "id": "gate-4", "label": "Immutable Git Tag & Cosign Provenance Signature", "value": "sig_provenance", "score": 25 }
+          ]
+        }
+      ]
+    }
+  ]
+}

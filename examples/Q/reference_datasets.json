@@ -1,0 +1,72 @@
+[
+  {
+    "id": "ref-cloud-providers",
+    "list_key": "cloud_providers",
+    "list_name": "Cloud Hosting Providers",
+    "category": "infrastructure",
+    "description": "Standard cloud infrastructure and on-premise datacenter targets",
+    "items": [
+      { "label": "Amazon Web Services (AWS)", "value": "aws", "score": 10 },
+      { "label": "Microsoft Azure", "value": "azure", "score": 10 },
+      { "label": "Google Cloud Platform (GCP)", "value": "gcp", "score": 10 },
+      { "label": "On-Premises Dedicated Datacenter", "value": "onprem", "score": 8 },
+      { "label": "Hybrid Multi-Cloud", "value": "hybrid", "score": 9 }
+    ]
+  },
+  {
+    "id": "ref-sla-tiers",
+    "list_key": "sla_availability_tiers",
+    "list_name": "SLA Availability Tiers",
+    "category": "service_levels",
+    "description": "Standard enterprise service level commitment tiers",
+    "items": [
+      { "label": "99.99% Availability (Tier 4 Fault Tolerant)", "value": "99_99", "score": 100 },
+      { "label": "99.95% Availability (Tier 3 High Availability)", "value": "99_95", "score": 85 },
+      { "label": "99.9% Availability (Tier 2 Standard Business)", "value": "99_9", "score": 70 },
+      { "label": "99.5% Availability (Tier 1 Basic)", "value": "99_5", "score": 50 },
+      { "label": "< 99.0% Availability (Best Effort / Non-Critical)", "value": "below_99", "score": 20 }
+    ]
+  },
+  {
+    "id": "ref-environments",
+    "list_key": "deployment_environments",
+    "list_name": "Deployment Environments",
+    "category": "infrastructure",
+    "description": "Software deployment lifecycle tiers",
+    "items": [
+      { "label": "Production Tier 1 (Customer Critical)", "value": "prod_tier1", "score": 10 },
+      { "label": "Production Tier 2 (Internal Business)", "value": "prod_tier2", "score": 8 },
+      { "label": "Staging / Pre-Production", "value": "staging", "score": 6 },
+      { "label": "QA / Automated Test Cluster", "value": "qa", "score": 4 },
+      { "label": "Development / Local Sandbox", "value": "dev", "score": 2 }
+    ]
+  },
+  {
+    "id": "ref-compliance-frameworks",
+    "list_key": "compliance_frameworks",
+    "list_name": "Compliance & Regulatory Frameworks",
+    "category": "governance",
+    "description": "Global information security and regulatory governance regimes",
+    "items": [
+      { "label": "SOC 2 Type II (Trust Services Criteria)", "value": "soc2_type2", "score": 10 },
+      { "label": "ISO/IEC 27001:2022 (ISMS)", "value": "iso27001", "score": 10 },
+      { "label": "NIST Cybersecurity Framework (CSF 2.0)", "value": "nist_csf", "score": 10 },
+      { "label": "EU General Data Protection Regulation (GDPR)", "value": "gdpr", "score": 10 },
+      { "label": "HIPAA Security & Privacy Rule", "value": "hipaa", "score": 10 },
+      { "label": "EU AI Act (High-Risk AI Systems)", "value": "eu_ai_act", "score": 10 }
+    ]
+  },
+  {
+    "id": "ref-data-classification",
+    "list_key": "data_classification",
+    "list_name": "Data Classification Levels",
+    "category": "security",
+    "description": "Information sensitivity classification tiers",
+    "items": [
+      { "label": "Public / Unrestricted", "value": "public", "score": 1 },
+      { "label": "Internal Use Only", "value": "internal", "score": 3 },
+      { "label": "Confidential / Commercial Sensitive", "value": "confidential", "score": 7 },
+      { "label": "Restricted / High Risk (PII, Financial, Secrets)", "value": "restricted", "score": 10 }
+    ]
+  }
+]

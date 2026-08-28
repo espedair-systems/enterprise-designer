@@ -1,0 +1,55 @@
+[
+  {
+    "id": "qb-01",
+    "code": "SEC-MFA-01",
+    "title": "Hardware Multi-Factor Authentication Enforcement",
+    "question_type": "single_choice",
+    "domain": "Security",
+    "guidance": "Verify that all root and administrative accounts enforce FIDO2 or WebAuthn hardware tokens.",
+    "options": [
+      { "label": "100% Enforced with Hardware Keys", "value": "fido2_enforced", "score": 100 },
+      { "label": "Software Authenticator App (TOTP)", "value": "totp_enforced", "score": 75 },
+      { "label": "SMS / Email Verification Only", "value": "sms_fallback", "score": 25 },
+      { "label": "Disabled / Single Factor", "value": "disabled", "score": 0 }
+    ],
+    "tags": ["soc2", "cc6.1", "identity", "mfa"]
+  },
+  {
+    "id": "qb-02",
+    "code": "AI-RISK-01",
+    "title": "Autonomous Decision Criticality Level",
+    "question_type": "dropdown",
+    "domain": "AI Governance",
+    "guidance": "Classify the autonomy impact on customer life, liberty, financial standing, or physical safety.",
+    "options": [
+      { "label": "Life-Critical / Safety-Impacting (Annex III High Risk)", "value": "critical_safety", "score": 20 },
+      { "label": "Financial / Credit Decisioning", "value": "financial_impact", "score": 40 },
+      { "label": "Operational Assistance / Advisory", "value": "advisory", "score": 80 },
+      { "label": "Low Risk / Informational Only", "value": "informational", "score": 100 }
+    ],
+    "tags": ["eu_ai_act", "nist_ai_rmf", "risk_tier"]
+  },
+  {
+    "id": "qb-03",
+    "code": "VEN-SLA-01",
+    "title": "Vendor Production Uptime Guarantee",
+    "question_type": "dropdown",
+    "domain": "Procurement",
+    "guidance": "Evaluate contractual uptime commitments and service credit penalties.",
+    "options": [
+      { "label": "99.99% Availability", "value": "sla_9999", "score": 100 },
+      { "label": "99.95% Availability", "value": "sla_9995", "score": 85 },
+      { "label": "99.9% Availability", "value": "sla_999", "score": 70 }
+    ],
+    "tags": ["rfp", "vendor", "sla"]
+  },
+  {
+    "id": "qb-04",
+    "code": "ARCH-HEX-01",
+    "title": "Domain Isolation & Dependency Inversion Check",
+    "question_type": "rating",
+    "domain": "Architecture",
+    "guidance": "Rate whether domain core has zero dependencies on external adapters, databases, or UI frameworks.",
+    "tags": ["hexagonal", "clean_architecture", "tech_debt"]
+  }
+]

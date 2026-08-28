@@ -20,6 +20,12 @@ auth:
 tui:
   resolution: "1080p" # 1080p | 1440p | 4k | auto
 
+# Change Request (CR) File Storage
+cr:
+  path: ".design/CR"
+  prefix: "cr-"
+  digits: 4
+
 # Architecture Operating System (Architecture OS) Artists & Services
 artists:
   enterprise_artist:

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.systems/schemas/q/question-bank.schema.json",
+  "title": "Enterprise Q Question Bank Item Schema",
+  "description": "JSON Schema for reusable catalog question templates in DES_BASE.quest_question_bank",
+  "type": "object",
+  "required": ["code", "title", "question_type", "domain"],
+  "properties": {
+    "id": { "type": "string" },
+    "code": { "type": "string" },
+    "title": { "type": "string" },
+    "question_type": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": ["Security", "AI Governance", "Procurement", "Architecture", "Logistics", "Operations", "Compliance"]
+    },
+    "guidance": { "type": "string" },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "score": { "type": "number" }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

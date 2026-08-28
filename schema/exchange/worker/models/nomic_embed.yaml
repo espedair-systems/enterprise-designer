@@ -1,0 +1,11 @@
+# ==============================================================================
+# Nomic Embed Text v1.5 Profile Configuration (768 Dimensions)
+# ==============================================================================
+profile: Full
+watch_dir: .
+model_name: nomic-embed-text-v1.5
+model_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/model.onnx
+tokenizer_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_lancedb
+dimension: Full768
+log_level: info

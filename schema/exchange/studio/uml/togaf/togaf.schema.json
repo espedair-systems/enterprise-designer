@@ -1,0 +1,395 @@
+{
+    "$schema": "http://json-schema.org",
+    "title": "OfficialTOGAFContentMetamodelRepository",
+    "description": "Enterprise-grade schema implementing the full Open Group TOGAF Content Metamodel entity attribute catalog and structural relationship rules.",
+    "type": "object",
+    "required": [
+        "repositoryMeta",
+        "components",
+        "relationships"
+    ],
+    "properties": {
+        "repositoryMeta": {
+            "type": "object",
+            "required": [
+                "enterpriseName",
+                "schemaVersion",
+                "exportedAt"
+            ],
+            "properties": {
+                "enterpriseName": {
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": "string",
+                    "const": "TOGAF-10.0"
+                },
+                "exportedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "environment": {
+                    "type": "string",
+                    "enum": [
+                        "Production",
+                        "Staging",
+                        "Sandbox"
+                    ]
+                }
+            }
+        },
+        "components": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/togafComponent"
+            }
+        },
+        "relationships": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/togafRelationship"
+            }
+        }
+    },
+    "definitions": {
+        "togafComponent": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "domain",
+                "type",
+                "coreAttributes"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 2
+                },
+                "description": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string",
+                    "enum": [
+                        "Strategic/Motivation",
+                        "Business",
+                        "Data",
+                        "Application",
+                        "Technology"
+                    ]
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "Driver",
+                        "Goal",
+                        "Objective",
+                        "Requirement",
+                        "Constraint",
+                        "Principle",
+                        "Actor",
+                        "Role",
+                        "Organization Unit",
+                        "Business Function",
+                        "Business Process",
+                        "Business Service",
+                        "Location",
+                        "Capability",
+                        "Data Entity",
+                        "Logical Data Component",
+                        "Physical Data Component",
+                        "Application Component",
+                        "Logical Application Component",
+                        "Physical Application Component",
+                        "Information System Service",
+                        "Technology Component",
+                        "Logical Technology Component",
+                        "Physical Technology Component",
+                        "Platform Service"
+                    ]
+                },
+                "coreAttributes": {
+                    "type": "object",
+                    "description": "Standard Attribute Catalog mapping directly to the official TOGAF spec specifications.",
+                    "required": [
+                        "lifecycleStatus",
+                        "owner",
+                        "source",
+                        "category"
+                    ],
+                    "properties": {
+                        "lifecycleStatus": {
+                            "type": "string",
+                            "enum": [
+                                "Proposed",
+                                "Approved",
+                                "In-Development",
+                                "Baseline",
+                                "Under-Review",
+                                "Deprecated",
+                                "Retired"
+                            ]
+                        },
+                        "owner": {
+                            "type": "string",
+                            "description": "Stakeholder or organizational unit responsible for this entity."
+                        },
+                        "source": {
+                            "type": "string",
+                            "description": "The origin of the artifact data (e.g., manual entry, system discovery tool, external architecture repository)."
+                        },
+                        "category": {
+                            "type": "string",
+                            "enum": [
+                                "Core",
+                                "Extension"
+                            ],
+                            "description": "Indicates if the element belongs to standard core or an architecture extension module."
+                        },
+                        "criticality": {
+                            "type": "string",
+                            "enum": [
+                                "Critical",
+                                "High",
+                                "Medium",
+                                "Low"
+                            ]
+                        },
+                        "maturityLevel": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 5
+                        }
+                    }
+                },
+                "extendedAttributes": {
+                    "type": "object",
+                    "description": "Placeholders for custom domain metric variables used by custom tooling engines."
+                }
+            },
+            "allOf": [
+                {
+                    "comment": "Business Process: Must include RACI metrics and estimated throughput volumes.",
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "Business Process"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "extendedAttributes": {
+                                "type": "object",
+                                "properties": {
+                                    "raciAccountable": {
+                                        "type": "string"
+                                    },
+                                    "raciResponsible": {
+                                        "type": "string"
+                                    },
+                                    "transactionVolume": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "comment": "Technology Component: Must track physical infrastructure metrics.",
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "Physical Technology Component"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "extendedAttributes": {
+                                "type": "object",
+                                "properties": {
+                                    "hardwareVendor": {
+                                        "type": "string"
+                                    },
+                                    "operatingSystem": {
+                                        "type": "string"
+                                    },
+                                    "networkZone": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "togafRelationship": {
+            "type": "object",
+            "required": [
+                "id",
+                "sourceId",
+                "sourceType",
+                "targetId",
+                "targetType",
+                "relationshipType"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "sourceId": {
+                    "type": "string"
+                },
+                "sourceType": {
+                    "type": "string"
+                },
+                "targetId": {
+                    "type": "string"
+                },
+                "targetType": {
+                    "type": "string"
+                },
+                "relationshipType": {
+                    "type": "string",
+                    "enum": [
+                        "Performs",
+                        "Executes",
+                        "Relies On",
+                        "Is Supported By",
+                        "Is Realised By",
+                        "Accesses",
+                        "Deploys To",
+                        "Composes",
+                        "Aggregates",
+                        "Triggers",
+                        "Fulfills",
+                        "Assigned To",
+                        "Consumes"
+                    ]
+                }
+            },
+            "allOf": [
+                {
+                    "comment": "Validation Rule: Actor can only interact via 'Performs' or 'Assigned To' with a Role.",
+                    "if": {
+                        "properties": {
+                            "sourceType": {
+                                "const": "Actor"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "targetType": {
+                                "const": "Role"
+                            },
+                            "relationshipType": {
+                                "enum": [
+                                    "Performs",
+                                    "Assigned To"
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "comment": "Validation Rule: Role executing operations must point to a Process or Function.",
+                    "if": {
+                        "properties": {
+                            "sourceType": {
+                                "const": "Role"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "targetType": {
+                                "enum": [
+                                    "Business Process",
+                                    "Business Function"
+                                ]
+                            },
+                            "relationshipType": {
+                                "const": "Executes"
+                            }
+                        }
+                    }
+                },
+                {
+                    "comment": "Validation Rule: Logical Data Components must compose into Data Entities.",
+                    "if": {
+                        "properties": {
+                            "sourceType": {
+                                "const": "Logical Data Component"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "targetType": {
+                                "const": "Data Entity"
+                            },
+                            "relationshipType": {
+                                "const": "Composes"
+                            }
+                        }
+                    }
+                },
+                {
+                    "comment": "Validation Rule: Data access actions can only perform 'Accesses' or 'Consumes' on entities.",
+                    "if": {
+                        "properties": {
+                            "sourceType": {
+                                "const": "Application Component"
+                            },
+                            "targetType": {
+                                "const": "Data Entity"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "relationshipType": {
+                                "enum": [
+                                    "Accesses",
+                                    "Consumes"
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "comment": "Validation Rule: App layer deployments onto Infrastructure platforms require 'Deploys To' strings.",
+                    "if": {
+                        "properties": {
+                            "sourceType": {
+                                "const": "Application Component"
+                            },
+                            "targetType": {
+                                "enum": [
+                                    "Technology Component",
+                                    "Physical Technology Component"
+                                ]
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "relationshipType": {
+                                "const": "Deploys To"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

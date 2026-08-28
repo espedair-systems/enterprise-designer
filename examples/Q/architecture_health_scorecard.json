@@ -1,0 +1,49 @@
+{
+  "id": "survey-arch-health-2026",
+  "app_id": "fleet-logistics",
+  "title": "Architecture & Technical Debt Modernization Scorecard",
+  "slug": "architecture-health-scorecard",
+  "version": "1.0.0",
+  "category": "health_check",
+  "status": "published",
+  "description": "Enterprise software maintainability, hexagonal architecture adherence, coupling metrics, and cloud modernization review.",
+  "sections": [
+    {
+      "id": "sec-arch-1",
+      "title": "System Topology & Cloud-Native Maturity",
+      "description": "Evaluate coupling, domain boundaries, and container orchestration.",
+      "sort_order": 1,
+      "questions": [
+        {
+          "id": "arch-101",
+          "code": "ARC-01",
+          "text": "Evaluated Microservice or Monolith Boundary",
+          "question_type": "text",
+          "required": true,
+          "sort_order": 1
+        },
+        {
+          "id": "arch-102",
+          "code": "ARC-02",
+          "text": "Clean Architecture & Hexagonal Port Separation Maturity Rating",
+          "question_type": "rating",
+          "required": true,
+          "sort_order": 2,
+          "rating_config": {
+            "scaleType": "1-5",
+            "lowLabel": "High Coupling / Spaghettified",
+            "highLabel": "Pure Hexagonal / Isolated Core"
+          }
+        },
+        {
+          "id": "arch-103",
+          "code": "ARC-03",
+          "text": "Technical Debt Hotspots & Modernization Plan",
+          "question_type": "textarea",
+          "required": false,
+          "sort_order": 3
+        }
+      ]
+    }
+  ]
+}

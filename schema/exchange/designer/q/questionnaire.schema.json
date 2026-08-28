@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.systems/schemas/q/questionnaire.schema.json",
+  "title": "Enterprise Q Designer Questionnaire Schema",
+  "description": "Authoritative JSON Schema definition for Enterprise Surveys, Audits, Questionnaires, and Dynamic Branching Logic in PostgreSQL DES_BASE.quest_surveys",
+  "type": "object",
+  "required": ["title", "slug", "version", "sections"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier of the questionnaire"
+    },
+    "app_id": {
+      "type": "string",
+      "description": "Parent Enterprise Designer App ID (e.g. fleet-logistics)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title of the survey/questionnaire"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "URL-safe alphanumeric slug"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "SemVer release version"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "security_soc2",
+        "ai_governance",
+        "rfp_rfq",
+        "health_check",
+        "fleet_logistics",
+        "governance",
+        "compliance",
+        "general"
+      ],
+      "description": "Domain classification category"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published", "archived"],
+      "default": "draft"
+    },
+    "description": {
+      "type": "string",
+      "description": "High-level summary of the questionnaire"
+    },
+    "description_markdown": {
+      "type": "string",
+      "description": "Rich GitHub-flavored markdown guidelines and instructions"
+    },
+    "sections": {
+      "type": "array",
+      "description": "Ordered pages or logical sections of the survey",
+      "items": {
+        "$ref": "#/$defs/SurveySection"
+      }
+    }
+  },
+  "$defs": {
+    "SurveySection": {
+      "type": "object",
+      "required": ["id", "title", "sort_order", "questions"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "sort_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SurveyQuestion"
+          }
+        }
+      }
+    },
+    "SurveyQuestion": {
+      "type": "object",
+      "required": ["id", "code", "text", "question_type", "sort_order"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string",
+          "description": "Unique question mnemonic code (e.g. OP-01, SF-02, JUMP-01)"
+        },
+        "text": {
+          "type": "string",
+          "description": "Primary prompt text or question statement"
+        },
+        "question_type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "email",
+            "single_choice",
+            "multiple_choice",
+            "dropdown",
+            "rating",
+            "slider",
+            "date",
+            "file_upload",
+            "signature",
+            "logic_jump",
+            "section_break"
+          ]
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "help_text": {
+          "type": "string"
+        },
+        "guidance_markdown": {
+          "type": "string",
+          "description": "Detailed auditor protocol and compliance instructions in markdown"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/QuestionOption"
+          }
+        },
+        "rating_config": {
+          "$ref": "#/$defs/RatingConfig"
+        },
+        "logic_jump": {
+          "$ref": "#/$defs/LogicJumpConfig"
+        },
+        "reference_data_key": {
+          "type": "string",
+          "description": "Key of bound reference dataset from DES_BASE.quest_reference_data"
+        },
+        "sort_order": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "QuestionOption": {
+      "type": "object",
+      "required": ["id", "label", "value"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        }
+      }
+    },
+    "RatingConfig": {
+      "type": "object",
+      "properties": {
+        "scaleType": {
+          "type": "string",
+          "enum": ["1-5", "1-10", "slider"]
+        },
+        "min": {
+          "type": "number",
+          "default": 0
+        },
+        "max": {
+          "type": "number",
+          "default": 100
+        },
+        "step": {
+          "type": "number",
+          "default": 1
+        },
+        "lowLabel": {
+          "type": "string"
+        },
+        "highLabel": {
+          "type": "string"
+        }
+      }
+    },
+    "LogicJumpConfig": {
+      "type": "object",
+      "required": ["sourceQuestionId", "operator", "action"],
+      "properties": {
+        "sourceQuestionId": {
+          "type": "string",
+          "description": "ID of question whose answer is evaluated"
+        },
+        "sourceQuestionCode": {
+          "type": "string",
+          "description": "Human-readable code of source question"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals",
+            "not_equals",
+            "less",
+            "greater",
+            "contains",
+            "empty",
+            "not_empty"
+          ]
+        },
+        "matchValue": {
+          "type": "string",
+          "description": "Literal or choice value to match"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["jump_page", "complete_survey", "skip_next"]
+        },
+        "targetPageIndex": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "targetPageTitle": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

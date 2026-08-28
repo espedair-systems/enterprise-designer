@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.systems/schemas/q/reference-data.schema.json",
+  "title": "Enterprise Q Reference Dataset Schema",
+  "description": "JSON Schema for lookup reference datasets and choice scales in DES_BASE.quest_reference_data",
+  "type": "object",
+  "required": ["list_key", "list_name", "category", "items"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "list_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "list_name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["infrastructure", "service_levels", "governance", "security", "organization", "telematics"]
+    },
+    "description": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "score": { "type": "number" },
+          "is_default": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

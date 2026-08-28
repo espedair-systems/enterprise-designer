@@ -1,0 +1,140 @@
+{
+  "id": "survey-fleet-safety-2026",
+  "app_id": "fleet-logistics",
+  "title": "Enterprise Fleet Driver Safety & Incident Audit 2026",
+  "slug": "fleet-safety-audit",
+  "version": "1.2.0",
+  "category": "fleet_logistics",
+  "status": "published",
+  "description": "Pre-trip commercial vehicle inspection, telematics verification, and driver safety sign-off.",
+  "description_markdown": "### Fleet Safety Compliance Protocol\nMandatory pre-trip inspection required for all commercial and electric fleet vehicles prior to dispatch.",
+  "sections": [
+    {
+      "id": "sec-1",
+      "title": "Operator Identity & Vehicle Assignment",
+      "description": "Verify driver credentials, license endorsements, and assigned CAN bus unit.",
+      "sort_order": 1,
+      "questions": [
+        {
+          "id": "q-101",
+          "code": "OP-01",
+          "text": "Select Assigned Commercial Vehicle Unit (VIN / Fleet ID)",
+          "question_type": "single_choice",
+          "required": true,
+          "sort_order": 1,
+          "guidance_markdown": "Ensure the selected vehicle matches the physical unit VIN located on the door pillar plate.",
+          "options": [
+            { "id": "opt-1", "label": "Volvo FH Electric (VIN: 1HGCR2F83HA001294)", "value": "vin_volvo_1294", "score": 10 },
+            { "id": "opt-2", "label": "Scania R500 Long-Haul (VIN: 2SCNR5F99KA004412)", "value": "vin_scania_4412", "score": 10 },
+            { "id": "opt-3", "label": "Mercedes-Benz eActros (VIN: 3MBEA7F11LA008891)", "value": "vin_mercedes_8891", "score": 10 }
+          ]
+        },
+        {
+          "id": "q-102",
+          "code": "OP-02",
+          "text": "Current Vehicle Odometer Reading (km)",
+          "question_type": "number",
+          "required": true,
+          "sort_order": 2,
+          "help_text": "Enter total kilometers displayed on the primary digital cluster."
+        },
+        {
+          "id": "q-103",
+          "code": "JUMP-01",
+          "text": "Conditional Branch: Skip directly to Sign-off if Volvo Electric Unit Selected",
+          "question_type": "logic_jump",
+          "required": false,
+          "sort_order": 3,
+          "logic_jump": {
+            "sourceQuestionId": "q-101",
+            "sourceQuestionCode": "OP-01",
+            "operator": "equals",
+            "matchValue": "vin_volvo_1294",
+            "action": "jump_page",
+            "targetPageIndex": 2,
+            "targetPageTitle": "Sign-off Certification & Dispatch Authorization"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sec-2",
+      "title": "Pre-Trip Telematics & Mechanical Health",
+      "description": "Physical inspection of tire pressure, emergency braking, and CAN bus sensors.",
+      "sort_order": 2,
+      "questions": [
+        {
+          "id": "q-201",
+          "code": "SF-01",
+          "text": "Pre-Trip Brake System & Pneumatic Pressure Rating",
+          "question_type": "rating",
+          "required": true,
+          "sort_order": 1,
+          "rating_config": {
+            "scaleType": "1-5",
+            "lowLabel": "Defective / Ground Unit",
+            "highLabel": "Optimal / Calibrated"
+          },
+          "help_text": "Scale: 1 (Defective) to 5 (Optimal)"
+        },
+        {
+          "id": "q-202",
+          "code": "SF-02",
+          "text": "Safety Critical Inspection Checklist",
+          "question_type": "multiple_choice",
+          "required": true,
+          "sort_order": 2,
+          "options": [
+            { "id": "chk-1", "label": "Emergency Stop Switch Functional", "value": "estop_ok", "score": 25 },
+            { "id": "chk-2", "label": "GPS & GSM Telematics Antenna Active", "value": "telematics_ok", "score": 25 },
+            { "id": "chk-3", "label": "First Aid & Hazmat Kit Verified", "value": "firstaid_ok", "score": 25 },
+            { "id": "chk-4", "label": "Tire Tread Depth > 4.5mm", "value": "tires_ok", "score": 25 }
+          ]
+        },
+        {
+          "id": "q-203",
+          "code": "SF-03",
+          "text": "CAN-Bus Telemetry Ingestion Quality Slider (0 - 100%)",
+          "question_type": "slider",
+          "required": true,
+          "sort_order": 3,
+          "rating_config": {
+            "scaleType": "slider",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "lowLabel": "0% Packet Loss",
+            "highLabel": "100% Ingested"
+          }
+        },
+        {
+          "id": "q-204",
+          "code": "SF-04",
+          "text": "Operator Remarks or Incident Notes",
+          "question_type": "textarea",
+          "required": false,
+          "sort_order": 4
+        }
+      ]
+    },
+    {
+      "id": "sec-3",
+      "title": "Sign-off Certification & Dispatch Authorization",
+      "description": "Digital signature verification and route confirmation.",
+      "sort_order": 3,
+      "questions": [
+        {
+          "id": "q-301",
+          "code": "SG-01",
+          "text": "I certify that all inspection items above have been physically verified.",
+          "question_type": "single_choice",
+          "required": true,
+          "sort_order": 1,
+          "options": [
+            { "id": "opt-agree", "label": "I Certify and Accept Compliance Responsibility", "value": "certified", "score": 100 }
+          ]
+        }
+      ]
+    }
+  ]
+}

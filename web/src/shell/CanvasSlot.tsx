@@ -5,7 +5,33 @@ import {
   Grid,
 } from 'lucide-react';
 import { useLayout } from './LayoutContext';
+import { ExecutiveDashboardCanvas } from '../canvas/ExecutiveDashboardCanvas';
+import { ProjectsDashboardCanvas } from '../canvas/ProjectsDashboardCanvas';
+import { PageRegistryCanvas } from '../canvas/PageRegistryCanvas';
+import { EntityRegistryCanvas } from '../canvas/EntityRegistryCanvas';
+import { RecentActivityCanvas } from '../canvas/RecentActivityCanvas';
+import { GlobalSearchCanvas } from '../canvas/GlobalSearchCanvas';
 import { VisualCanvasGrid } from '../canvas/VisualCanvasGrid';
+import { WireframeSketchCanvas } from '../canvas/WireframeSketchCanvas';
+import { ProjectScaffoldCanvas } from '../canvas/ProjectScaffoldCanvas';
+import { UseCaseDiagramCanvas } from '../canvas/UseCaseDiagramCanvas';
+import { ActivityDiagramCanvas } from '../canvas/ActivityDiagramCanvas';
+import { StateMachineCanvas } from '../canvas/StateMachineCanvas';
+import { SequenceDiagramCanvas } from '../canvas/SequenceDiagramCanvas';
+import { BehavioralDiagramsCanvas } from '../canvas/BehavioralDiagramsCanvas';
+import { StructuralDiagramsCanvas } from '../canvas/StructuralDiagramsCanvas';
+import { QRegistryCanvas } from '../canvas/q/QRegistryCanvas';
+import { VisualSurveyDesignerCanvas } from '../canvas/q/VisualSurveyDesignerCanvas';
+import { QuestionBankCanvas } from '../canvas/q/QuestionBankCanvas';
+import { ReferenceDataCanvas } from '../canvas/q/ReferenceDataCanvas';
+import { AuditSubmissionsCanvas } from '../canvas/q/AuditSubmissionsCanvas';
+import { GuidanceDocsCanvas } from '../canvas/q/GuidanceDocsCanvas';
+import { SchemaRegistryCanvas } from '../canvas/schema/SchemaRegistryCanvas';
+import { VisualSchemaDesignerCanvas } from '../canvas/schema/VisualSchemaDesignerCanvas';
+import { SchemaGraphVisualizerCanvas } from '../canvas/schema/SchemaGraphVisualizerCanvas';
+import { OpenAPIManagerCanvas } from '../canvas/schema/OpenAPIManagerCanvas';
+import { InteractiveAPIConsoleCanvas } from '../canvas/schema/InteractiveAPIConsoleCanvas';
+import { DialectCatalogCanvas } from '../canvas/schema/DialectCatalogCanvas';
 import { ERModelerCanvas, ERTableDef } from '../datamodel/ERModelerCanvas';
 import { LineageDAGView } from '../lineage/LineageDAGView';
 import { SqlEditorView } from '../sqleditor/SqlEditorView';
@@ -69,6 +95,70 @@ export const CanvasSlot: React.FC = () => {
 
       {/* Main Canvas Multi-Mode Viewport */}
       <div className="flex-1 overflow-auto relative transition-all h-full bg-background">
+        {/* MODE 0: EXECUTIVE 4-LAYER DASHBOARD */}
+        {canvasMode === 'executive_dashboard' && (
+          <ExecutiveDashboardCanvas />
+        )}
+
+        {/* MODE 0.1: PROJECT REGISTRY TABLE */}
+        {canvasMode === 'dashboard_projects' && (
+          <ProjectsDashboardCanvas />
+        )}
+
+        {/* MODE 0.2: RECENT ACTIVITY & AUDIT LOG */}
+        {canvasMode === 'recent_activity' && (
+          <RecentActivityCanvas />
+        )}
+
+        {/* MODE 0.3: GLOBAL SEARCH */}
+        {canvasMode === 'global_search' && (
+          <GlobalSearchCanvas />
+        )}
+
+        {/* MODE 0.4: PAGE & ROUTE REGISTRY TABLE */}
+        {canvasMode === 'page_registry' && (
+          <PageRegistryCanvas />
+        )}
+
+        {/* MODE 0.4.1: ENTITY & SCHEMA REGISTRY TABLE */}
+        {canvasMode === 'entity_registry' && (
+          <EntityRegistryCanvas />
+        )}
+
+        {/* BEHAVIORAL DIAGRAMS (7) */}
+        {canvasMode === 'use_case' && (
+          <UseCaseDiagramCanvas />
+        )}
+
+        {canvasMode === 'activity_diagram' && (
+          <ActivityDiagramCanvas />
+        )}
+
+        {canvasMode === 'state_machine' && (
+          <StateMachineCanvas />
+        )}
+
+        {canvasMode === 'sequence_diagram' && (
+          <SequenceDiagramCanvas />
+        )}
+
+        {(canvasMode === 'communication_diagram' ||
+          canvasMode === 'interaction_overview_diagram' ||
+          canvasMode === 'timing_diagram') && (
+          <BehavioralDiagramsCanvas />
+        )}
+
+        {/* STRUCTURAL DIAGRAMS (7) */}
+        {(canvasMode === 'class_diagram' ||
+          canvasMode === 'object_diagram' ||
+          canvasMode === 'component_diagram' ||
+          canvasMode === 'deployment_diagram' ||
+          canvasMode === 'package_diagram' ||
+          canvasMode === 'composite_structure_diagram' ||
+          canvasMode === 'profile_diagram') && (
+          <StructuralDiagramsCanvas />
+        )}
+
         {/* MODE 1: VISUAL APP CANVAS (DRAG & DROP GRID) */}
         {canvasMode === 'visual_canvas' && (
           <div
@@ -81,6 +171,16 @@ export const CanvasSlot: React.FC = () => {
               showGrid={showGrid}
             />
           </div>
+        )}
+
+        {/* MODE 1.1: FIGMA / PENPOT WIREFRAME & SKETCH */}
+        {canvasMode === 'ui_sketch' && (
+          <WireframeSketchCanvas />
+        )}
+
+        {/* MODE 1.2: PROJECT SCAFFOLDING & BUILD PIPELINE */}
+        {canvasMode === 'project_scaffold' && (
+          <ProjectScaffoldCanvas />
         )}
 
         {/* MODE 2: ER MODELER */}
@@ -101,6 +201,56 @@ export const CanvasSlot: React.FC = () => {
         {/* MODE 5: WORKFLOW / AGENT GRAPH */}
         {canvasMode === 'workflow_graph' && (
           <LineageDAGView />
+        )}
+
+        {/* Q DESIGNER SUBSYSTEM (DES_BASE.quest_*) */}
+        {canvasMode === 'q_registry' && (
+          <QRegistryCanvas />
+        )}
+
+        {canvasMode === 'q_designer' && (
+          <VisualSurveyDesignerCanvas />
+        )}
+
+        {canvasMode === 'q_bank' && (
+          <QuestionBankCanvas />
+        )}
+
+        {canvasMode === 'q_reference' && (
+          <ReferenceDataCanvas />
+        )}
+
+        {canvasMode === 'q_responses' && (
+          <AuditSubmissionsCanvas />
+        )}
+
+        {canvasMode === 'q_guidance' && (
+          <GuidanceDocsCanvas />
+        )}
+
+        {/* SCHEMA & OPENAPI DESIGNER SUBSYSTEM (DES_BASE.schema_*) */}
+        {canvasMode === 'schema_registry' && (
+          <SchemaRegistryCanvas />
+        )}
+
+        {canvasMode === 'schema_designer' && (
+          <VisualSchemaDesignerCanvas />
+        )}
+
+        {canvasMode === 'schema_graph' && (
+          <SchemaGraphVisualizerCanvas />
+        )}
+
+        {canvasMode === 'openapi_manager' && (
+          <OpenAPIManagerCanvas />
+        )}
+
+        {canvasMode === 'api_console' && (
+          <InteractiveAPIConsoleCanvas />
+        )}
+
+        {canvasMode === 'dialect_catalog' && (
+          <DialectCatalogCanvas />
         )}
       </div>
 

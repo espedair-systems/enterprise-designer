@@ -1,0 +1,241 @@
+{
+  "version": "1.0.0",
+  "exported_at": "2026-08-22T08:00:00Z",
+  "workspace": {
+    "id": "ws-da-default",
+    "name": "Enterprise Data Architecture Hub",
+    "description": "Enterprise Data Architecture repository and Medallion Lakehouse platform.",
+    "industry": "Financial Services & Banking"
+  },
+  "subject_areas": [
+    {
+      "id": "sa-party",
+      "workspace_id": "ws-da-default",
+      "code": "SA-PARTY",
+      "name": "Party & Customer Master",
+      "description": "Individual and organizational counterparty domains, accounts, and KYC attributes.",
+      "executive_sponsor": "Chief Data Officer",
+      "governance_tier": "TIER_1_ENTERPRISE"
+    },
+    {
+      "id": "sa-finance",
+      "workspace_id": "ws-da-default",
+      "code": "SA-FINANCE",
+      "name": "Finance & General Ledger",
+      "description": "Chart of accounts, general ledger postings, balance sheets, and regulatory returns.",
+      "executive_sponsor": "Chief Financial Officer",
+      "governance_tier": "TIER_1_ENTERPRISE"
+    },
+    {
+      "id": "sa-trading",
+      "workspace_id": "ws-da-default",
+      "code": "SA-TRADING",
+      "name": "Capital Markets & Trading",
+      "description": "Trade executions, order book lifecycle, instruments, and settlement pipelines.",
+      "executive_sponsor": "Head of Capital Markets",
+      "governance_tier": "TIER_2_DIVISIONAL"
+    }
+  ],
+  "domains": [
+    {
+      "id": "dom-customer",
+      "workspace_id": "ws-da-default",
+      "subject_area_id": "sa-party",
+      "code": "DOM-CUST",
+      "name": "Customer 360 & KYC",
+      "domain_lead": "Lead Data Steward (Party)",
+      "criticality": "HIGH",
+      "description": "Customer identity, legal entity identifiers, and compliance screening."
+    },
+    {
+      "id": "dom-orders",
+      "workspace_id": "ws-da-default",
+      "subject_area_id": "sa-trading",
+      "code": "DOM-ORDERS",
+      "name": "Order Management & Executions",
+      "domain_lead": "Trading Data Architect",
+      "criticality": "HIGH",
+      "description": "High-frequency trade execution logs and venue allocations."
+    }
+  ],
+  "conceptual_entities": [
+    {
+      "id": "ce-customer",
+      "domain_id": "dom-customer",
+      "code": "CE-CUST",
+      "name": "Customer",
+      "definition": "Legal person or corporate counterparty with an active contract.",
+      "steward_role": "Customer Data Steward",
+      "confidentiality_class": "RESTRICTED_PII",
+      "business_artist_req_id": "REQ-PARTY-001"
+    }
+  ],
+  "physical_schemas": [
+    {
+      "id": "ps-gold",
+      "workspace_id": "ws-da-default",
+      "database_system": "PostgreSQL",
+      "schema_name": "gold_analytics",
+      "medallion_tier": "GOLD",
+      "target_environment": "PROD",
+      "description": "Curated Dimensional business-ready star schemas."
+    },
+    {
+      "id": "ps-silver",
+      "workspace_id": "ws-da-default",
+      "database_system": "PostgreSQL",
+      "schema_name": "silver_vault",
+      "medallion_tier": "SILVER",
+      "target_environment": "PROD",
+      "description": "Raw and conformed Data Vault 2.0 hubs, satellites, and links."
+    },
+    {
+      "id": "ps-bronze",
+      "workspace_id": "ws-da-default",
+      "database_system": "PostgreSQL",
+      "schema_name": "bronze_landing",
+      "medallion_tier": "BRONZE",
+      "target_environment": "PROD",
+      "description": "Immutable append-only ingestion delta tables."
+    }
+  ],
+  "physical_tables": [
+    {
+      "id": "tbl-hub-customer",
+      "physical_schema_id": "ps-silver",
+      "table_name": "hub_customer",
+      "model_type": "hub",
+      "physical_type": "TABLE",
+      "row_count_estimate": 1450000,
+      "storage_bytes": 128000000,
+      "design_patterns": ["system_audit", "business_key"],
+      "description": "Data Vault 2.0 Hub containing business keys for enterprise customer records.",
+      "columns": [
+        {
+          "id": "col-1",
+          "column_name": "hk_customer",
+          "data_type": "VARCHAR(64)",
+          "is_nullable": false,
+          "is_primary_key": true,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-2",
+          "column_name": "bk_customer_id",
+          "data_type": "VARCHAR(32)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": true,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-3",
+          "column_name": "load_timestamp",
+          "data_type": "TIMESTAMPTZ",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-4",
+          "column_name": "record_source",
+          "data_type": "VARCHAR(64)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        }
+      ]
+    },
+    {
+      "id": "tbl-dim-customer",
+      "physical_schema_id": "ps-gold",
+      "table_name": "dim_customer",
+      "model_type": "dimension",
+      "physical_type": "TABLE",
+      "row_count_estimate": 1450000,
+      "storage_bytes": 450000000,
+      "design_patterns": ["effective_dating", "scd", "soft_delete", "system_audit"],
+      "description": "Conformed Type 2 Slowly Changing Dimension for customer analytics.",
+      "columns": [
+        {
+          "id": "col-5",
+          "column_name": "customer_sk",
+          "data_type": "BIGINT",
+          "is_nullable": false,
+          "is_primary_key": true,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-6",
+          "column_name": "customer_natural_id",
+          "data_type": "VARCHAR(32)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": true,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-7",
+          "column_name": "full_name",
+          "data_type": "VARCHAR(255)",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": true
+        },
+        {
+          "id": "col-8",
+          "column_name": "valid_from",
+          "data_type": "DATE",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-9",
+          "column_name": "valid_to",
+          "data_type": "DATE",
+          "is_nullable": true,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        },
+        {
+          "id": "col-10",
+          "column_name": "is_current",
+          "data_type": "BOOLEAN",
+          "is_nullable": false,
+          "is_primary_key": false,
+          "is_business_key": false,
+          "is_foreign_key": false,
+          "is_pii": false
+        }
+      ]
+    }
+  ],
+  "data_products": [
+    {
+      "id": "dp-customer-insights",
+      "code": "DP-CUST-360",
+      "title": "Customer 360 Real-Time Feature Store",
+      "owner_role": "Customer Analytics Lead",
+      "status": "PUBLISHED",
+      "output_port": "REST API & SQL View",
+      "tier": "GOLD"
+    }
+  ]
+}

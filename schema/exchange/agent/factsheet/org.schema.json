@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.io/schema/org",
+  "title": "Organization Structure Schema",
+  "description": "Schema definition for organizational hierarchies, org units, roles, and personnel.",
+  "type": "object",
+  "required": ["orgUnits"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the organization chart"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the organization chart"
+    },
+    "orgUnits": {
+      "type": "array",
+      "description": "Organizational units (departments, divisions, teams)",
+      "items": {
+        "$ref": "#/$defs/OrgUnit"
+      }
+    },
+    "roles": {
+      "type": "array",
+      "description": "Positions and roles defined within units",
+      "items": {
+        "$ref": "#/$defs/OrgRole"
+      }
+    },
+    "persons": {
+      "type": "array",
+      "description": "Personnel occupying roles in units",
+      "items": {
+        "$ref": "#/$defs/Person"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "OrgUnit": {
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the organizational unit"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the unit"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["organisation", "division", "department", "business-unit", "team"],
+          "description": "Classification type of the organizational unit"
+        },
+        "parentId": {
+          "type": ["string", "null"],
+          "description": "Parent unit identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the unit"
+        }
+      },
+      "additionalProperties": true
+    },
+    "OrgRole": {
+      "type": "object",
+      "required": ["id", "name", "unitId"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the role"
+        },
+        "name": {
+          "type": "string",
+          "description": "Title or position name"
+        },
+        "unitId": {
+          "type": "string",
+          "description": "Org unit identifier where role belongs"
+        },
+        "parentRoleId": {
+          "type": ["string", "null"],
+          "description": "Parent role identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Role responsibilities description"
+        }
+      },
+      "additionalProperties": true
+    },
+    "Person": {
+      "type": "object",
+      "required": ["id", "name", "unitId", "roleId"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the person"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the person"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address or contact handle"
+        },
+        "unitId": {
+          "type": "string",
+          "description": "Org unit identifier"
+        },
+        "roleId": {
+          "type": "string",
+          "description": "Role identifier"
+        },
+        "managerId": {
+          "type": ["string", "null"],
+          "description": "Reporting manager person identifier"
+        },
+        "employeeGroup": {
+          "type": "string",
+          "description": "Employee employment classification group"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

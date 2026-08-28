@@ -14,28 +14,28 @@ interface StudioShellProps {
 export const StudioShell: React.FC<StudioShellProps> = ({ appId }) => {
   return (
     <LayoutProvider initialAppId={appId}>
-      <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-sans">
-        {/* Slot 1: Left-most Activity Rail */}
+      <div className="flex h-screen w-screen bg-background text-foreground overflow-hidden font-sans select-none">
+        {/* Slot 1: Left-most Full-Height Activity Rail */}
         <ActivityRail />
 
-        {/* Right Workspace Main Area */}
+        {/* Slot 2: Left Tool Panel (Extends all the way to the top of the screen) */}
+        <SidebarSlot position="left" />
+
+        {/* Slot 3: Right Workspace Main Column */}
         <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-          {/* Slot 2: Top Menu Bar */}
+          {/* Top Menu Bar (Mode badges align directly to left edge of Canvas) */}
           <TopMenuBar />
 
-          {/* Workbench Middle Row: Left Sidebar, Canvas, Right Sidebar */}
+          {/* Workbench Middle Row: Canvas, Right Inspector */}
           <div className="flex-1 flex min-h-0 relative overflow-hidden">
-            {/* Slot 3: Left Sidebar */}
-            <SidebarSlot position="left" />
-
-            {/* Slot 4: Center Multi-Mode Canvas */}
+            {/* Center Multi-Mode Canvas */}
             <CanvasSlot />
 
-            {/* Slot 5: Right Sidebar */}
+            {/* Right Properties Inspector */}
             <SidebarSlot position="right" />
           </div>
 
-          {/* Slot 6: Bottom Tray Console */}
+          {/* Bottom Tray Console */}
           <BottomTray />
         </div>
 
@@ -45,3 +45,5 @@ export const StudioShell: React.FC<StudioShellProps> = ({ appId }) => {
     </LayoutProvider>
   );
 };
+
+export default StudioShell;

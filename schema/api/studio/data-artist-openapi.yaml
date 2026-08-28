@@ -1,0 +1,323 @@
+openapi: 3.0.3
+info:
+  title: Data Artist REST API
+  description: Authoritative Enterprise Data Architecture & Universal Semantic Platform API
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Production Data Artist API Server
+paths:
+  /health:
+    get:
+      summary: Health check and platform status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  service: { type: string }
+                  schema: { type: string }
+                  version: { type: string }
+                  port: { type: integer }
+
+  /dashboard:
+    get:
+      summary: Executive Data Architecture KPI Summary
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Executive data dashboard summary
+
+  /information-concepts:
+    get:
+      summary: List conceptual information concepts
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of information concepts
+    post:
+      summary: Create or update information concept
+      responses:
+        '201':
+          description: Created
+
+  /information-concepts/{id}:
+    get:
+      summary: Get information concept by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Concept details
+    delete:
+      summary: Delete information concept
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Deleted
+
+  /lakehouse/catalogs:
+    get:
+      summary: List distinct lakehouse catalogs and schemas
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Catalog and schema summaries
+
+  /lakehouse/tables:
+    get:
+      summary: List lakehouse tables
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of lakehouse tables
+    post:
+      summary: Register lakehouse table
+      responses:
+        '201':
+          description: Created
+
+  /lakehouse/tables/{id}:
+    get:
+      summary: Get lakehouse table by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Lakehouse table details
+    delete:
+      summary: Delete lakehouse table
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Deleted
+
+  /contracts:
+    get:
+      summary: List shift-left data contracts
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of data contracts
+    post:
+      summary: Create or update data contract
+      responses:
+        '201':
+          description: Created
+
+  /contracts/{id}:
+    get:
+      summary: Get data contract by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Contract details
+    delete:
+      summary: Delete data contract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Deleted
+
+  /contracts/{id}/validate:
+    post:
+      summary: Validate data contract rules against target schema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Validation results
+
+  /semantic/cubes:
+    get:
+      summary: List semantic cubes and measures
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of semantic cubes
+    post:
+      summary: Create or update semantic cube
+      responses:
+        '201':
+          description: Created
+
+  /semantic/cubes/{id}:
+    get:
+      summary: Get semantic cube by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Semantic cube details
+    delete:
+      summary: Delete semantic cube
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Deleted
+
+  /semantic/cubes/{id}/sql:
+    post:
+      summary: Compile SQL query for measures and dimensions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Compiled SQL
+
+  /lineage/graph:
+    get:
+      summary: Fetch complete lineage DAG
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Lineage graph nodes and edges
+
+  /lineage/blast-radius:
+    get:
+      summary: Calculate downstream blast radius for a given dataset URN
+      parameters:
+        - name: urn
+          in: query
+          required: true
+          schema: { type: string }
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Blast radius impact report
+
+  /quality/health-index:
+    get:
+      summary: Calculate composite zero-mock data health score
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Composite health index report
+
+  /quality/suites:
+    get:
+      summary: List quality test suites
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of quality suites
+    post:
+      summary: Create or update quality suite
+      responses:
+        '201':
+          description: Created
+
+  /master-data/domains:
+    get:
+      summary: List master data domains and taxonomies
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of master data domains
+    post:
+      summary: Create or update master data domain
+      responses:
+        '201':
+          description: Created
+
+  /data-vault/models:
+    get:
+      summary: List Data Vault 2.0 models (Hubs, Links, Sats)
+      parameters:
+        - name: workspace_id
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of Data Vault models
+    post:
+      summary: Create or update Data Vault model
+      responses:
+        '201':
+          description: Created
+
+  /data-vault/models/{id}/ddl:
+    get:
+      summary: Generate Data Vault 2.0 SQL DDL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - name: dialect
+          in: query
+          schema: { type: string, default: POSTGRESQL }
+      responses:
+        '200':
+          description: Generated SQL DDL

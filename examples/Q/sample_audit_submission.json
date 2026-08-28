@@ -1,0 +1,17 @@
+{
+  "id": "sub-20260828-9921",
+  "survey_id": "survey-fleet-safety-2026",
+  "respondent_id": "driver-operator-0881",
+  "status": "completed",
+  "score": 98.5,
+  "answers": {
+    "q-101": "vin_volvo_1294",
+    "q-102": 142850,
+    "q-201": 5,
+    "q-202": ["estop_ok", "telematics_ok", "firstaid_ok", "tires_ok"],
+    "q-203": 95,
+    "q-204": "Unit pre-trip completed with zero mechanical anomalies.",
+    "q-301": "certified"
+  },
+  "submitted_at": "2026-08-28T15:28:00Z"
+}

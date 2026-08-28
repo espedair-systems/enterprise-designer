@@ -42,6 +42,20 @@ func SetupRouter(h *Handler, distFS fs.FS) *chi.Mux {
 		r.Post("/designer/apps/{id}/export/source", h.ExportAppSource)
 		r.Post("/designer/apps/{id}/export/binary", h.ExportAppBinary)
 
+		// UML Use Cases & Diagrams (uc_ and diag_ tables in DES_BASE)
+		r.Get("/designer/apps/{id}/usecases", h.ListUseCases)
+		r.Post("/designer/apps/{id}/usecases", h.SaveUseCase)
+		r.Delete("/designer/apps/{id}/usecases/{useCaseId}", h.DeleteUseCase)
+		r.Get("/designer/apps/{id}/actors", h.ListActors)
+		r.Post("/designer/apps/{id}/actors", h.SaveActor)
+		r.Delete("/designer/apps/{id}/actors/{actorId}", h.DeleteActor)
+		r.Get("/designer/apps/{id}/diagrams", h.GetDiagramLayout)
+		r.Post("/designer/apps/{id}/diagrams", h.SaveDiagramLayout)
+
+		// Change Requests (CR)
+		r.Get("/cr", h.ListChangeRequests)
+		r.Post("/cr", h.CreateChangeRequest)
+
 		// ESPEDAIR Schematics Bridge: ER Modeling, Migrations, AST Linter & Lineage
 		r.Post("/schematics/diff", h.GenerateSchemaDiff)
 		r.Post("/schematics/migrations/plan", h.PlanMigration)
@@ -137,6 +151,30 @@ func SetupRouter(h *Handler, distFS fs.FS) *chi.Mux {
 		r.Get("/vector/status", h.HandleVectorStatus)
 		r.Post("/vector/synthesize", h.HandleVectorSynthesize)
 		r.Get("/vector/graph", h.HandleVectorGraph)
+
+		// Q Designer Subsystem (DES_BASE.quest_*)
+		r.Get("/designer/q/surveys", ListQuestSurveysHandler)
+		r.Post("/designer/q/surveys", CreateQuestSurveyHandler)
+		r.Get("/designer/q/surveys/{id}", GetQuestSurveyHandler)
+		r.Put("/designer/q/surveys/{id}", UpdateQuestSurveyHandler)
+		r.Delete("/designer/q/surveys/{id}", DeleteQuestSurveyHandler)
+		r.Get("/designer/q/question-bank", ListQuestQuestionBankHandler)
+		r.Post("/designer/q/question-bank", CreateQuestQuestionBankHandler)
+		r.Get("/designer/q/reference-data", ListQuestReferenceDataHandler)
+		r.Post("/designer/q/reference-data", CreateQuestReferenceDataHandler)
+		r.Get("/designer/q/submissions", ListQuestSubmissionsHandler)
+		r.Post("/designer/q/submissions", CreateQuestSubmissionHandler)
+
+		// Schema & OpenAPI Designer Subsystem (DES_BASE.schema_* & openapi_*)
+		r.Get("/designer/schemas", ListSchemaRegistriesHandler)
+		r.Post("/designer/schemas", CreateSchemaRegistryHandler)
+		r.Get("/designer/schemas/{id}", GetSchemaRegistryHandler)
+		r.Put("/designer/schemas/{id}", UpdateSchemaRegistryHandler)
+		r.Delete("/designer/schemas/{id}", DeleteSchemaRegistryHandler)
+		r.Get("/designer/openapi/endpoints", ListOpenAPIEndpointsHandler)
+		r.Post("/designer/openapi/endpoints", CreateOpenAPIEndpointHandler)
+		r.Put("/designer/openapi/endpoints/{id}", UpdateOpenAPIEndpointHandler)
+		r.Delete("/designer/openapi/endpoints/{id}", DeleteOpenAPIEndpointHandler)
 	})
 
 	// Static Web Assets Mounting

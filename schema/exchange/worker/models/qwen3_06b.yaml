@@ -1,0 +1,18 @@
+# ==============================================================================
+# Qwen3-Embedding-0.6B Profile Configuration (1024 Dimensions)
+# ==============================================================================
+profile: Full
+
+# Filtered list of file extensions to index
+allowed_extensions: null
+
+# Target watch directory
+watch_dir: .
+
+# Engine parameters
+model_name: Qwen3-Embedding-0.6B
+model_path: ~/.mcp-ag/models/Qwen3-Embedding-0.6B/model.onnx
+tokenizer_path: ~/.mcp-ag/models/Qwen3-Embedding-0.6B/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_qwen3_06b_lancedb
+dimension: Dim1024
+log_level: info

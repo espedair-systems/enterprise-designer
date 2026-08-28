@@ -16,6 +16,7 @@ import {
   HardDrive,
   Cpu,
   Download,
+  Upload,
   Lock,
   Moon,
   Sun,
@@ -23,12 +24,17 @@ import {
   Shield,
   FileCheck2,
   RotateCcw,
+  Users,
+  Key,
+  FileText,
+  Activity,
+  CheckCircle2,
 } from 'lucide-react';
 import { useLayout } from './LayoutContext';
 import { RailItem, CanvasMode } from './types';
-import { useTheme, type Theme } from '../components/theme/ThemeProvider';
+import { useTheme } from '../components/theme/ThemeProvider';
 
-type SettingsSection = 'appearance' | 'database' | 'slots' | 'pipeline' | 'governance';
+type SettingsSection = 'ui' | 'database' | 'users' | 'roles' | 'imports' | 'slots' | 'pipeline';
 
 export const SlotConfigModal: React.FC = () => {
   const {
@@ -41,16 +47,26 @@ export const SlotConfigModal: React.FC = () => {
     saveLayoutToBackend,
     environment,
     setEnvironment,
+    autosaveEnabled,
+    setAutosaveEnabled,
+    autosaveInterval,
+    setAutosaveInterval,
   } = useLayout();
 
   const { theme, setTheme } = useTheme();
 
-  const [activeSection, setActiveSection] = useState<SettingsSection>('appearance');
+  const [activeSection, setActiveSection] = useState<SettingsSection>('ui');
   const [newItemLabel, setNewItemLabel] = useState<string>('');
   const [newItemIcon, setNewItemIcon] = useState<string>('LayersIcon');
   const [newItemCanvas, setNewItemCanvas] = useState<CanvasMode>('visual_canvas');
   const [gridSnap, setGridSnap] = useState<boolean>(true);
   const [selectedAccent, setSelectedAccent] = useState<string>('indigo');
+  const [selectedDensity, setSelectedDensity] = useState<'compact' | 'normal' | 'relaxed'>('normal');
+
+  // Import / Ingestion State
+  const [importType, setImportType] = useState<'json' | 'ddl' | 'csv'>('json');
+  const [importContent, setImportContent] = useState<string>('{\n  "schema": "DES_BASE",\n  "version": "1.0.0",\n  "entities": []\n}');
+  const [importStatus, setImportStatus] = useState<string | null>(null);
 
   if (!isConfigModalOpen) return null;
 
@@ -67,13 +83,21 @@ export const SlotConfigModal: React.FC = () => {
     setNewItemLabel('');
   };
 
+  const handleSimulateImport = () => {
+    setImportStatus('Validating and ingesting into PostgreSQL DES_BASE...');
+    setTimeout(() => {
+      setImportStatus('Successfully ingested artifacts into schema DES_BASE.');
+      setTimeout(() => setImportStatus(null), 3000);
+    }, 1200);
+  };
+
   return (
     <div
-      className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-card border border-border rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-card border border-border rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col h-[700px] max-h-[90vh] animate-in fade-in zoom-in-95 duration-150 text-foreground">
         {/* Top Dialog Header */}
         <div className="p-4 border-b border-border flex items-center justify-between bg-muted/40 shrink-0">
           <div className="flex items-center gap-3">
@@ -82,49 +106,49 @@ export const SlotConfigModal: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-foreground">EA Designer Settings</h2>
+                <h2 className="text-base font-bold text-foreground">System Settings & EA Workbench Configuration</h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
-                  DES_BASE
+                  DES_BASE:8088
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">Manage appearance, PostgreSQL schema, slot architecture & releases</p>
+              <p className="text-xs text-muted-foreground">Manage UI preferences, PostgreSQL DES_BASE storage, IAM, Ingestion, and EA Designer Slots</p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setIsConfigModalOpen(false)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Master Body with Left Sidebar Navigation */}
+        {/* Master Body with Left Settings Navigation */}
         <div className="flex flex-1 overflow-hidden">
           {/* Left Settings Sidebar */}
           <aside className="w-60 bg-muted/20 border-r border-border p-3 flex flex-col justify-between shrink-0 select-none">
             <div className="space-y-1">
               <div className="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
-                Preferences
+                Settings & Governance
               </div>
 
               <button
                 type="button"
-                onClick={() => setActiveSection('appearance')}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left ${
-                  activeSection === 'appearance'
+                onClick={() => setActiveSection('ui')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                  activeSection === 'ui'
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 <Palette className="w-4 h-4" />
-                <span>Appearance & Theme</span>
+                <span>UI & Appearance</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveSection('database')}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
                   activeSection === 'database'
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
@@ -136,42 +160,74 @@ export const SlotConfigModal: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => setActiveSection('slots')}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left ${
-                  activeSection === 'slots'
+                onClick={() => setActiveSection('users')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                  activeSection === 'users'
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Layers className="w-4 h-4" />
-                <span>Activity Rail & Slots</span>
+                <Users className="w-4 h-4" />
+                <span>User Management (IAM)</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setActiveSection('pipeline')}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left ${
-                  activeSection === 'pipeline'
+                onClick={() => setActiveSection('roles')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                  activeSection === 'roles'
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Download className="w-4 h-4" />
-                <span>Build & Binary</span>
+                <Key className="w-4 h-4" />
+                <span>Roles & Entitlements</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setActiveSection('governance')}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left ${
-                  activeSection === 'governance'
+                onClick={() => setActiveSection('imports')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                  activeSection === 'imports'
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Shield className="w-4 h-4" />
-                <span>Security & IAM</span>
+                <Upload className="w-4 h-4" />
+                <span>Imports & Ingestion</span>
               </button>
+
+              <div className="pt-2 border-t border-border/60">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+                  EA Designer Workbench
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveSection('slots')}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                    activeSection === 'slots'
+                      ? 'bg-primary text-primary-foreground shadow-xs'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                  <span>EA Designer Slots</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveSection('pipeline')}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left cursor-pointer ${
+                    activeSection === 'pipeline'
+                      ? 'bg-primary text-primary-foreground shadow-xs'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Build & Binary Release</span>
+                </button>
+              </div>
             </div>
 
             {/* Bottom Meta */}
@@ -189,22 +245,21 @@ export const SlotConfigModal: React.FC = () => {
 
           {/* Right Section Content */}
           <main className="flex-1 p-6 overflow-y-auto bg-card text-foreground space-y-6 text-xs">
-            {/* 1. Appearance & Theme */}
-            {activeSection === 'appearance' && (
+            {/* 1. UI & Appearance */}
+            {activeSection === 'ui' && (
               <div className="space-y-6">
                 <div>
                   <h3 className="text-sm font-bold text-foreground">Theme & Visual Appearance</h3>
-                  <p className="text-xs text-muted-foreground">Select color mode and interface palette for optimal visual comfort.</p>
+                  <p className="text-xs text-muted-foreground">Select color mode, density, and interface palette matching Data Artist.</p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {/* Light Theme Card */}
                   <button
                     type="button"
                     onClick={() => setTheme('light')}
-                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative ${
+                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative cursor-pointer ${
                       theme === 'light'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-sm'
+                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-xs'
                         : 'border-border bg-card hover:bg-muted/40'
                     }`}
                   >
@@ -218,13 +273,12 @@ export const SlotConfigModal: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Dark Modern Card */}
                   <button
                     type="button"
                     onClick={() => setTheme('dark')}
-                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative ${
+                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative cursor-pointer ${
                       theme === 'dark'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-sm'
+                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-xs'
                         : 'border-border bg-card hover:bg-muted/40'
                     }`}
                   >
@@ -238,13 +292,12 @@ export const SlotConfigModal: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Midnight Theme Card */}
                   <button
                     type="button"
                     onClick={() => setTheme('midnight')}
-                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative ${
+                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative cursor-pointer ${
                       theme === 'midnight'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-sm'
+                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-xs'
                         : 'border-border bg-card hover:bg-muted/40'
                     }`}
                   >
@@ -258,13 +311,12 @@ export const SlotConfigModal: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Slate Stealth Card */}
                   <button
                     type="button"
                     onClick={() => setTheme('slate')}
-                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative ${
+                    className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between h-28 relative cursor-pointer ${
                       theme === 'slate'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-sm'
+                        ? 'border-primary bg-primary/5 ring-2 ring-primary/30 shadow-xs'
                         : 'border-border bg-card hover:bg-muted/40'
                     }`}
                   >
@@ -295,7 +347,7 @@ export const SlotConfigModal: React.FC = () => {
                         key={c.id}
                         type="button"
                         onClick={() => setSelectedAccent(c.id)}
-                        className={`w-8 h-8 rounded-full ${c.bg} flex items-center justify-center transition-all ${
+                        className={`w-8 h-8 rounded-full ${c.bg} flex items-center justify-center transition-all cursor-pointer ${
                           selectedAccent === c.id ? 'ring-4 ring-primary/30 scale-110 shadow-md' : 'opacity-80 hover:opacity-100'
                         }`}
                         title={c.name}
@@ -306,18 +358,28 @@ export const SlotConfigModal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Canvas Diagram Grid Snapping */}
+                {/* Density Options */}
                 <div className="p-4 rounded-xl border border-border bg-muted/20 flex items-center justify-between">
                   <div>
-                    <span className="font-semibold text-xs text-foreground block">20px Canvas Grid Snapping</span>
-                    <span className="text-[11px] text-muted-foreground">Align widgets and nodes automatically to 20px grid</span>
+                    <span className="font-semibold text-xs text-foreground block">UI Canvas Density</span>
+                    <span className="text-[11px] text-muted-foreground">Adjust padding, spacing, and typography scale</span>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={gridSnap}
-                    onChange={(e) => setGridSnap(e.target.checked)}
-                    className="w-4 h-4 rounded text-primary bg-background border-border focus:ring-primary"
-                  />
+                  <div className="flex items-center gap-1 bg-card border border-border p-1 rounded-lg">
+                    {(['compact', 'normal', 'relaxed'] as const).map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => setSelectedDensity(d)}
+                        className={`px-2.5 py-1 rounded text-xs font-semibold capitalize transition-all cursor-pointer ${
+                          selectedDensity === d
+                            ? 'bg-primary text-primary-foreground shadow-xs'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -326,18 +388,18 @@ export const SlotConfigModal: React.FC = () => {
             {activeSection === 'database' && (
               <div className="space-y-5">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">PostgreSQL Database Configuration</h3>
-                  <p className="text-xs text-muted-foreground">Authoritative persistence and multi-tenant schema isolation in PostgreSQL 16.</p>
+                  <h3 className="text-sm font-bold text-foreground">PostgreSQL Database Storage</h3>
+                  <p className="text-xs text-muted-foreground">Authoritative persistence and multi-tenant schema isolation in PostgreSQL.</p>
                 </div>
 
                 <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Lock className="w-4 h-4 text-emerald-500" />
-                      <span className="font-bold text-xs text-foreground">PostgreSQL Authoritative Schema: DES_BASE</span>
+                      <span className="font-bold text-xs text-foreground">Authoritative Schema: DES_BASE</span>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-semibold border border-emerald-500/20">
-                      Connected (Port 5432)
+                      Connected (Port 5432 / API 8088)
                     </span>
                   </div>
 
@@ -355,14 +417,52 @@ export const SlotConfigModal: React.FC = () => {
                       <span className="text-foreground">25 Max Open • 5 Idle • 15m Lifetime</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground text-[11px] block">Dialect & Engine:</span>
-                      <span className="text-foreground">PostgreSQL (pgx driver / SQL DDL AST)</span>
+                      <span className="text-muted-foreground text-[11px] block">Dialect & Driver:</span>
+                      <span className="text-foreground">PostgreSQL (pgx driver / AST Parser)</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Autosave to DES_BASE Configuration */}
+                <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-xs text-foreground block">Autosave to PostgreSQL (DES_BASE)</span>
+                      <span className="text-[11px] text-muted-foreground">Automatically synchronize changes and layout state in the background</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={autosaveEnabled}
+                      onChange={(e) => setAutosaveEnabled(e.target.checked)}
+                      className="w-4 h-4 rounded text-primary bg-background border-border focus:ring-primary cursor-pointer"
+                    />
+                  </div>
+
+                  {autosaveEnabled && (
+                    <div className="flex items-center justify-between pt-2 border-t border-border/60">
+                      <span className="text-[11px] text-muted-foreground">Sync Debounce Interval:</span>
+                      <div className="flex items-center gap-1">
+                        {[5, 10, 30, 60].map((sec) => (
+                          <button
+                            key={sec}
+                            type="button"
+                            onClick={() => setAutosaveInterval(sec)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                              autosaveInterval === sec
+                                ? 'bg-primary text-primary-foreground shadow-xs'
+                                : 'bg-card text-muted-foreground hover:text-foreground border border-border'
+                            }`}
+                          >
+                            {sec}s
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Synchronized Schema Tables</h4>
+                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Synchronized DES_BASE Tables</h4>
                   <div className="rounded-xl border border-border overflow-hidden">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
@@ -376,21 +476,19 @@ export const SlotConfigModal: React.FC = () => {
                       </thead>
                       <tbody className="divide-y divide-border bg-card">
                         {[
+                          { name: 'designer_apps', cols: 7, pk: 'id', rows: 'Dynamic' },
+                          { name: 'designer_layouts', cols: 6, pk: 'id', rows: 'Dynamic' },
                           { name: 'designer_workspaces', cols: 4, pk: 'id', rows: 1 },
-                          { name: 'designer_apps', cols: 6, pk: 'id', rows: 2 },
-                          { name: 'designer_layouts', cols: 5, pk: 'id', rows: 2 },
                           { name: 'designer_widgets', cols: 8, pk: 'id', rows: 18 },
                           { name: 'designer_datasources', cols: 7, pk: 'id', rows: 3 },
-                          { name: 'designer_schematics_diffs', cols: 6, pk: 'id', rows: 4 },
                           { name: 'designer_lineage_nodes', cols: 6, pk: 'id', rows: 5 },
-                          { name: 'designer_build_artifacts', cols: 7, pk: 'id', rows: 2 },
                         ].map((t) => (
                           <tr key={t.name} className="hover:bg-muted/20 transition-colors">
                             <td className="p-2.5 font-mono font-bold text-foreground">{t.name}</td>
                             <td className="p-2.5 text-muted-foreground">{t.cols} cols</td>
                             <td className="p-2.5 font-mono text-muted-foreground">{t.pk}</td>
-                            <td className="p-2.5 font-bold text-primary">{t.rows} rows</td>
-                            <td className="p-2.5"><span className="text-emerald-500 font-bold text-[10px]">● Active</span></td>
+                            <td className="p-2.5 font-bold text-primary">{t.rows}</td>
+                            <td className="p-2.5"><span className="text-emerald-500 font-bold text-[10px]">● Authoritative</span></td>
                           </tr>
                         ))}
                       </tbody>
@@ -400,12 +498,135 @@ export const SlotConfigModal: React.FC = () => {
               </div>
             )}
 
-            {/* 3. Activity Rail & Slots */}
+            {/* 3. User Management (IAM) */}
+            {activeSection === 'users' && (
+              <div className="space-y-5">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">User Management & IAM</h3>
+                  <p className="text-xs text-muted-foreground">Authoritative user accounts, authentication tokens, and profile tenancy.</p>
+                </div>
+
+                <div className="rounded-xl border border-border overflow-hidden">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-muted/50 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
+                        <th className="p-3">User ID</th>
+                        <th className="p-3">Full Name</th>
+                        <th className="p-3">Email</th>
+                        <th className="p-3">Assigned Role</th>
+                        <th className="p-3">Schema Access</th>
+                        <th className="p-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border bg-card">
+                      <tr className="hover:bg-muted/20 transition-colors">
+                        <td className="p-3 font-mono font-bold text-foreground">EMP-892401</td>
+                        <td className="p-3 font-semibold text-foreground">Lead Architect</td>
+                        <td className="p-3 text-muted-foreground font-mono">lead.architect@enterprise.internal</td>
+                        <td className="p-3"><span className="px-2 py-0.5 rounded bg-primary/10 text-primary font-bold text-[10px]">Lead Architect</span></td>
+                        <td className="p-3 font-mono text-muted-foreground">DES_BASE, public</td>
+                        <td className="p-3"><span className="text-emerald-500 font-bold text-[10px]">● Active</span></td>
+                      </tr>
+                      <tr className="hover:bg-muted/20 transition-colors">
+                        <td className="p-3 font-mono font-bold text-foreground">EMP-774120</td>
+                        <td className="p-3 font-semibold text-foreground">Enterprise Modeler</td>
+                        <td className="p-3 text-muted-foreground font-mono">modeler@enterprise.internal</td>
+                        <td className="p-3"><span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 font-bold text-[10px]">Data Engineer</span></td>
+                        <td className="p-3 font-mono text-muted-foreground">DES_BASE</td>
+                        <td className="p-3"><span className="text-emerald-500 font-bold text-[10px]">● Active</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* 4. Roles & Entitlements */}
+            {activeSection === 'roles' && (
+              <div className="space-y-5">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Roles & Access Entitlements</h3>
+                  <p className="text-xs text-muted-foreground">Role-Based Access Control (RBAC) definitions and schema permissions.</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { role: 'Lead Architect', desc: 'Full administrative access to all schema tables, DDL execution, and deployment pipelines in DES_BASE.', tag: 'Full Control' },
+                    { role: 'Enterprise Modeler', desc: 'Can design ER models, edit widgets, and execute AST queries on DES_BASE.', tag: 'Editor' },
+                    { role: 'Autonomous Agent Worker', desc: 'Read/write telemetry, dispatch events, and update decision workflow graphs.', tag: 'Service Account' },
+                    { role: 'Viewer / Stakeholder', desc: 'Read-only access to Dashboards, CLL DAG, and published applications.', tag: 'Read Only' },
+                  ].map((r) => (
+                    <div key={r.role} className="p-4 rounded-xl border border-border bg-muted/20 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-foreground">{r.role}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold border border-primary/20">{r.tag}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{r.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 5. Imports & Ingestion */}
+            {activeSection === 'imports' && (
+              <div className="space-y-5">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Data Ingestion & Schema Imports</h3>
+                  <p className="text-xs text-muted-foreground">Ingest external JSON models, PostgreSQL DDL scripts, and CSV datasets directly into DES_BASE.</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {(['json', 'ddl', 'csv'] as const).map((fmt) => (
+                    <button
+                      key={fmt}
+                      type="button"
+                      onClick={() => setImportType(fmt)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase transition-all cursor-pointer ${
+                        importType === fmt
+                          ? 'bg-primary text-primary-foreground shadow-xs'
+                          : 'bg-muted text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {fmt} Ingestion
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="font-semibold text-foreground text-xs">Payload / Script Input</label>
+                  <textarea
+                    rows={8}
+                    value={importContent}
+                    onChange={(e) => setImportContent(e.target.value)}
+                    className="w-full p-3 bg-background border border-border rounded-xl font-mono text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+
+                {importStatus && (
+                  <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 text-xs font-semibold flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>{importStatus}</span>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleSimulateImport}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-xl shadow-xs hover:bg-primary/90 transition-all cursor-pointer"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Execute Ingestion into DES_BASE</span>
+                </button>
+              </div>
+            )}
+
+            {/* 6. EA Designer Slots & Workbench */}
             {activeSection === 'slots' && (
               <div className="space-y-5">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">Activity Rail & 5-Slot Workbench</h3>
-                  <p className="text-xs text-muted-foreground">The Activity Rail is the sole authoritative mechanism for moving between workspace canvases.</p>
+                  <h3 className="text-sm font-bold text-foreground">EA Designer Activity Rail & Slot Architecture</h3>
+                  <p className="text-xs text-muted-foreground">Customize activity rail tools, default workbench panels, and layout DSL slots.</p>
                 </div>
 
                 <div className="space-y-2">
@@ -421,14 +642,14 @@ export const SlotConfigModal: React.FC = () => {
                         <span className="font-bold text-foreground">{item.label}</span>
                         {item.targetCanvas && (
                           <span className="text-[10px] bg-primary/10 text-primary font-mono px-2 py-0.5 rounded border border-primary/20">
-                            Target: {item.targetCanvas}
+                            Canvas: {item.targetCanvas}
                           </span>
                         )}
                       </div>
                       <button
                         type="button"
                         onClick={() => removeRailItem(item.id)}
-                        className="text-muted-foreground hover:text-destructive p-1 rounded transition-colors"
+                        className="text-muted-foreground hover:text-destructive p-1 rounded transition-colors cursor-pointer"
                         title="Remove Slot"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -475,7 +696,7 @@ export const SlotConfigModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddTool}
-                    className="px-3.5 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+                    className="px-3.5 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Slot to Activity Rail</span>
@@ -484,7 +705,7 @@ export const SlotConfigModal: React.FC = () => {
               </div>
             )}
 
-            {/* 4. Build & Binary Release */}
+            {/* 7. Build & Binary Release */}
             {activeSection === 'pipeline' && (
               <div className="space-y-5">
                 <div>
@@ -506,47 +727,8 @@ export const SlotConfigModal: React.FC = () => {
                     <span className="text-foreground font-bold">8088</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-muted-foreground">PostgreSQL Schema:</span>
+                    <span className="text-muted-foreground">Authoritative Schema:</span>
                     <span className="text-purple-400 font-bold">DES_BASE</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 5. Governance & IAM */}
-            {activeSection === 'governance' && (
-              <div className="space-y-5">
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">Security, Tenancy & Environment</h3>
-                  <p className="text-xs text-muted-foreground">Multi-tenant workspace isolation and environment lifecycle management.</p>
-                </div>
-
-                <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-xs text-foreground">Deployment Stage Environment:</span>
-                    <div className="flex items-center gap-1 bg-card border border-border p-1 rounded-lg">
-                      {(['DEV', 'TEST', 'STAGING', 'PROD'] as const).map((env) => (
-                        <button
-                          key={env}
-                          type="button"
-                          onClick={() => setEnvironment(env)}
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                            environment === env
-                              ? env === 'PROD'
-                                ? 'bg-rose-600 text-white'
-                                : 'bg-primary text-primary-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          {env}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-border/60 flex justify-between text-xs">
-                    <span className="text-muted-foreground">Active Workspace:</span>
-                    <span className="font-mono font-bold text-foreground">ws-base-default (Primary)</span>
                   </div>
                 </div>
               </div>
@@ -559,7 +741,7 @@ export const SlotConfigModal: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsConfigModalOpen(false)}
-            className="px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg text-xs font-semibold transition-colors"
+            className="px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-xl text-xs font-semibold transition-colors cursor-pointer"
           >
             Close
           </button>
@@ -569,13 +751,15 @@ export const SlotConfigModal: React.FC = () => {
               await saveLayoutToBackend();
               setIsConfigModalOpen(false);
             }}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 transition-colors"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs hover:bg-primary/90 transition-colors cursor-pointer"
           >
             <Check className="w-4 h-4" />
-            <span>Apply & Save Settings</span>
+            <span>Apply & Save Settings to DES_BASE</span>
           </button>
         </div>
       </div>
     </div>
   );
 };
+
+export default SlotConfigModal;

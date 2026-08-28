@@ -1,0 +1,678 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-architect.inspire/schema/archimate-model.schema.json",
+  "title": "ArchiMate Model Schema",
+  "description": "JSON Schema for ArchiMate 3.0 / 3.1 / 3.2 models converted from FactSheet enterprise architecture data. Defines the structure for elements, relationships, views, and metadata.",
+  "type": "object",
+  "required": ["metadata", "elements", "relationships"],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Model-level metadata and governance information",
+      "required": ["modelName", "source", "exportTimestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "modelId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique identifier for this model"
+        },
+        "modelName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name of the ArchiMate model"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of model purpose and scope"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+          "description": "Model version (e.g., 1.0.0)"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["FactSheet Export", "Archi Editor", "Direct Import", "Transformation", "Enterprise Artist"],
+          "description": "Origin of the model data"
+        },
+        "sourceReference": {
+          "type": "string",
+          "description": "Reference to original data source (file, URL, API endpoint)"
+        },
+        "exportTimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when model was exported/transformed"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp"
+        },
+        "archimateVersion": {
+          "type": "string",
+          "enum": ["3.0", "3.1", "3.2"],
+          "default": "3.0",
+          "description": "ArchiMate specification version"
+        },
+        "organization": {
+          "type": "string",
+          "description": "Organization name for the model"
+        },
+        "author": {
+          "type": "string",
+          "description": "Person or system that created the model"
+        },
+        "license": {
+          "type": "string",
+          "description": "License governing model usage"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Version of this schema definition"
+        }
+      }
+    },
+    "elements": {
+      "type": "array",
+      "description": "Collection of ArchiMate model elements",
+      "items": {
+        "$ref": "#/$defs/archimateElement"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Collection of associations between elements",
+      "items": {
+        "$ref": "#/$defs/archimateRelationship"
+      }
+    },
+    "views": {
+      "type": "array",
+      "description": "Collection of model views (diagrams and visualizations)",
+      "items": {
+        "$ref": "#/$defs/archimateView"
+      }
+    },
+    "properties": {
+      "type": "array",
+      "description": "Custom properties and attributes used throughout the model",
+      "items": {
+        "$ref": "#/$defs/propertyDefinition"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Architectural constraints and principles",
+      "items": {
+        "$ref": "#/$defs/constraint"
+      }
+    }
+  },
+  "$defs": {
+    "elementBase": {
+      "type": "object",
+      "description": "Base definition for all ArchiMate elements",
+      "required": ["id", "type", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique identifier (UUID or descriptive ID)"
+        },
+        "type": {
+          "type": "string",
+          "description": "ArchiMate element type"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Element name"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display-friendly name (may differ from name)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Extended documentation"
+        },
+        "sourceId": {
+          "type": "string",
+          "description": "Reference to source element (e.g., FactSheet entity ID)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Custom key-value properties",
+          "additionalProperties": true
+        },
+        "labels": {
+          "type": "array",
+          "description": "Tags/labels for categorization",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      }
+    },
+    "archimateElement": {
+      "type": "object",
+      "description": "ArchiMate model element with type-specific constraints",
+      "allOf": [
+        { "$ref": "#/$defs/elementBase" },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "BusinessActor",
+                "BusinessRole",
+                "BusinessCollaboration",
+                "BusinessInterface",
+                "BusinessProcess",
+                "BusinessFunction",
+                "BusinessInteraction",
+                "BusinessEvent",
+                "BusinessService",
+                "BusinessObject",
+                "Contract",
+                "Representation",
+                "Product",
+                "Meaning",
+                "Value",
+                "ApplicationComponent",
+                "ApplicationCollaboration",
+                "ApplicationInterface",
+                "ApplicationFunction",
+                "ApplicationInteraction",
+                "ApplicationProcess",
+                "ApplicationService",
+                "ApplicationEvent",
+                "DataObject",
+                "Node",
+                "InfrastructureNode",
+                "InfrastructureFunction",
+                "InfrastructureInterface",
+                "InfrastructureService",
+                "InfrastructureComponent",
+                "TechnologyCollaboration",
+                "TechnologyInterface",
+                "TechnologyFunction",
+                "TechnologyProcess",
+                "TechnologyInteraction",
+                "TechnologyEvent",
+                "TechnologyService",
+                "CommunicationNetwork",
+                "Path",
+                "SystemSoftware",
+                "Device",
+                "Artifact",
+                "Equipment",
+                "Facility",
+                "DistributionNetwork",
+                "Material",
+                "Stakeholder",
+                "Driver",
+                "Assessment",
+                "Goal",
+                "Outcome",
+                "Principle",
+                "Requirement",
+                "Constraint",
+                "Assumption",
+                "StakeholderValue",
+                "Resource",
+                "Capability",
+                "CourseOfAction",
+                "ValueStream",
+                "WorkPackage",
+                "Deliverable",
+                "ImplementationEvent",
+                "Plateau",
+                "Gap",
+                "Grouping",
+                "Location",
+                "ChangeEvent",
+                "Platform",
+                "TechnologyStack"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "archimateRelationship": {
+      "type": "object",
+      "description": "Association between two ArchiMate elements",
+      "required": ["id", "type", "sourceId", "targetId"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique relationship identifier (UUID or descriptive ID)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Composition",
+            "Aggregation",
+            "Assignment",
+            "Realization",
+            "Specialization",
+            "Association",
+            "Access",
+            "Serving",
+            "Influence",
+            "Triggering",
+            "Flow",
+            "Interaction",
+            "Used By",
+            "Realizes",
+            "Assigned To",
+            "Associated With",
+            "Depends On",
+            "Related To",
+            "Implements",
+            "Fulfills",
+            "Manages",
+            "Collaborated With",
+            "Drives",
+            "Supports",
+            "Derives From",
+            "Produces",
+            "Accesses",
+            "Aggregates",
+            "Composes"
+          ],
+          "description": "Type of relationship"
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional relationship name or label"
+        },
+        "sourceId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "ID of source element"
+        },
+        "targetId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "ID of target element"
+        },
+        "description": {
+          "type": "string",
+          "description": "Relationship description"
+        },
+        "sourceReference": {
+          "type": "string",
+          "description": "Source relationship identifier from origin system"
+        },
+        "strength": {
+          "type": "string",
+          "enum": ["strong", "medium", "weak"],
+          "description": "Relationship strength indicator"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Custom relationship properties",
+          "additionalProperties": true
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      }
+    },
+    "archimateView": {
+      "type": "object",
+      "description": "Visual representation of model (diagram or canvas)",
+      "required": ["id", "name", "viewType"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique view identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name of the view"
+        },
+        "description": {
+          "type": "string",
+          "description": "View description and purpose"
+        },
+        "viewType": {
+          "type": "string",
+          "enum": [
+            "Motivation",
+            "Strategy",
+            "Business",
+            "Application",
+            "Technology",
+            "Physical",
+            "Implementation",
+            "ImplementationAndMigration",
+            "ApplicationCooperation",
+            "Layered",
+            "Organization",
+            "InformationStructure",
+            "ServiceRealization",
+            "TechnologyUsage",
+            "BusinessView",
+            "ApplicationView",
+            "InfrastructureView",
+            "ImplementationView",
+            "BusinessToApplicationView",
+            "ApplicationToInfrastructureView",
+            "BusinessToInfrastructureView",
+            "StrategyView",
+            "TransformationView",
+            "ConceptualView",
+            "LogicalView",
+            "PhysicalView",
+            "CustomView"
+          ],
+          "description": "Type of architectural view"
+        },
+        "stakeholder": {
+          "type": "string",
+          "description": "Target stakeholder for this view"
+        },
+        "elementIds": {
+          "type": "array",
+          "description": "IDs of elements included in this view",
+          "items": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$"
+          }
+        },
+        "relationshipIds": {
+          "type": "array",
+          "description": "IDs of relationships to display",
+          "items": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$"
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "description": "Visual positioning information for elements",
+          "items": {
+            "$ref": "#/$defs/viewNode"
+          }
+        },
+        "connections": {
+          "type": "array",
+          "description": "Visual routing information for relationships",
+          "items": {
+            "$ref": "#/$defs/viewConnection"
+          }
+        },
+        "viewpoint": {
+          "description": "Viewpoint configuration, either string name or structured definition",
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Viewpoint name identifier"
+            },
+            {
+              "type": "object",
+              "description": "Structured viewpoint configuration",
+              "additionalProperties": true,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Viewpoint name"
+                },
+                "perspective": {
+                  "type": "string",
+                  "description": "Primary perspective of the view"
+                },
+                "scope": {
+                  "type": "string",
+                  "description": "Scope of the view"
+                },
+                "abstraction": {
+                  "type": "string",
+                  "description": "Abstraction level"
+                }
+              }
+            }
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "description": "Annotations and notes on the view",
+          "items": {
+            "$ref": "#/$defs/viewNote"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      }
+    },
+    "viewNode": {
+      "type": "object",
+      "description": "Visual positioning of an element in a view",
+      "required": ["elementId", "x", "y"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique node instance identifier"
+        },
+        "elementId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Referenced element ID"
+        },
+        "x": {
+          "type": "number",
+          "description": "Horizontal position in pixels"
+        },
+        "y": {
+          "type": "number",
+          "description": "Vertical position in pixels"
+        },
+        "width": {
+          "type": "number",
+          "description": "Width in pixels"
+        },
+        "height": {
+          "type": "number",
+          "description": "Height in pixels"
+        },
+        "style": {
+          "type": "object",
+          "description": "Visual styling",
+          "additionalProperties": true,
+          "properties": {
+            "color": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "Hex color code"
+            },
+            "fontSize": {
+              "type": "integer",
+              "description": "Font size in points"
+            }
+          }
+        }
+      }
+    },
+    "viewConnection": {
+      "type": "object",
+      "description": "Visual routing of a relationship in a view",
+      "required": ["relationshipId", "sourceNodeId", "targetNodeId"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Unique connection instance identifier"
+        },
+        "relationshipId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Referenced relationship ID"
+        },
+        "sourceNodeId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Source element or node ID"
+        },
+        "targetNodeId": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Target element or node ID"
+        },
+        "waypoints": {
+          "type": "array",
+          "description": "Path waypoints for routing",
+          "items": {
+            "type": "object",
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            },
+            "required": ["x", "y"]
+          }
+        },
+        "style": {
+          "type": "object",
+          "description": "Visual styling for connection",
+          "additionalProperties": true
+        }
+      }
+    },
+    "viewNote": {
+      "type": "object",
+      "description": "Text annotation on a view",
+      "required": ["id", "text", "x", "y"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Note identifier"
+        },
+        "text": {
+          "type": "string",
+          "description": "Note content"
+        },
+        "x": {
+          "type": "number",
+          "description": "Horizontal position in pixels"
+        },
+        "y": {
+          "type": "number",
+          "description": "Vertical position in pixels"
+        },
+        "width": {
+          "type": "number",
+          "description": "Width in pixels"
+        },
+        "height": {
+          "type": "number",
+          "description": "Height in pixels"
+        }
+      }
+    },
+    "propertyDefinition": {
+      "type": "object",
+      "description": "Definition of a custom property",
+      "required": ["id", "name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Property identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Property name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "date", "enum", "url"],
+          "description": "Property data type"
+        },
+        "description": {
+          "type": "string",
+          "description": "Property description"
+        },
+        "defaultValue": {
+          "description": "Default value for this property"
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "description": "Architectural constraint definition",
+      "required": ["id", "name", "statement"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-zA-Z0-9_-]+)$",
+          "description": "Constraint identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Constraint name"
+        },
+        "statement": {
+          "type": "string",
+          "description": "Constraint statement/rule"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["security", "performance", "scalability", "compliance", "integration", "governance"],
+          "description": "Constraint category"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Constraint severity level"
+        }
+      }
+    }
+  }
+}

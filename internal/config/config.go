@@ -58,6 +58,11 @@ type Config struct {
 	TUI struct {
 		Resolution string `yaml:"resolution"` // 1080p | 1440p | 4k | auto
 	} `yaml:"tui"`
+	CR struct {
+		Path   string `yaml:"path" json:"path"`
+		Prefix string `yaml:"prefix" json:"prefix"`
+		Digits int    `yaml:"digits" json:"digits"`
+	} `yaml:"cr" json:"cr"`
 	Artists struct {
 		EnterpriseArtist  ArtistServiceConfig `yaml:"enterprise_artist" json:"enterprise_artist"`
 		BusinessArtist    ArtistServiceConfig `yaml:"business_artist" json:"business_artist"`
@@ -122,6 +127,9 @@ func DefaultConfig() *Config {
 	cfg.Database.Postgres.ConnMaxLifetime = "15m"
 	cfg.Auth.Enabled = false
 	cfg.TUI.Resolution = "1080p"
+	cfg.CR.Path = ".design/CR"
+	cfg.CR.Prefix = "cr-"
+	cfg.CR.Digits = 4
 
 	cfg.Artists.EnterpriseArtist = ArtistServiceConfig{
 		ID: "enterprise-artist", Name: "Enterprise Artist", URL: "http://localhost:8080", Enabled: true, HealthPath: "/api/v1/health", TimeoutSec: 3,

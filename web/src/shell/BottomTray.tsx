@@ -19,6 +19,7 @@ export const BottomTray: React.FC = () => {
     bottomTrayHeight,
     activeBottomTab,
     setActiveBottomTab,
+    domainMode,
   } = useLayout();
 
   const [queryText, setQueryText] = useState<string>('SELECT * FROM DES_BASE.designer_apps LIMIT 10;');
@@ -27,6 +28,10 @@ export const BottomTray: React.FC = () => {
     { time: '01:20:02', level: 'INFO', msg: 'Loaded dynamic slot DSL for application "fleet-logistics"' },
     { time: '01:20:04', level: 'INFO', msg: 'Scaffolder verified enterprise-template base structure' },
   ]);
+
+  if (domainMode === 'projects' || domainMode === 'dashboard') {
+    return null;
+  }
 
   if (!bottomTrayOpen) {
     return (

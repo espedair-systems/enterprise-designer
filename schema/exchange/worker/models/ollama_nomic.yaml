@@ -1,0 +1,19 @@
+# ==============================================================================
+# Local Nomic Embeddings + Ollama Host LLM Profile Configuration
+# ==============================================================================
+profile: Full
+watch_dir: .
+
+# Embedding Model (Discovered from ~/.mcp-ag/models/nomic-embed-text-v1.5)
+model_name: nomic-embed-text-v1.5
+model_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/model.onnx
+tokenizer_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/tokenizer.json
+dimension: Full768
+db_path: ~/.mcp-ag/data/local_artifacts_ollama_lancedb
+
+# Host LLM Provider (Ollama: `qwen2.5-coder:1.5b-base`, `qwen3.5:27b`, etc.)
+provider: ollama
+endpoint_url: http://localhost:11434
+llm_name: qwen2.5-coder:1.5b-base
+
+log_level: info

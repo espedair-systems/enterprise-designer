@@ -133,10 +133,56 @@ export const VisualCanvasGrid: React.FC<VisualCanvasGridProps> = ({
     };
   }, [draggingId, resizingId, dragOffset, resizeStart, widgets, slots.canvas, updateSlots]);
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (!canvasRef.current) return;
+
+    try {
+      const dataStr = e.dataTransfer.getData('application/json');
+      if (!dataStr) return;
+      const widgetDef = JSON.parse(dataStr);
+      if (!widgetDef || !widgetDef.type) return;
+
+      const rect = canvasRef.current.getBoundingClientRect();
+      const dropX = snapToGrid(Math.max(20, e.clientX - rect.left));
+      const dropY = snapToGrid(Math.max(20, e.clientY - rect.top));
+
+      const newWidgetId = `widget-${Date.now().toString().slice(-5)}`;
+      const newWidget = {
+        id: newWidgetId,
+        type: widgetDef.type,
+        x: dropX,
+        y: dropY,
+        width: widgetDef.defaultWidth || 320,
+        height: widgetDef.defaultHeight || 180,
+        title: widgetDef.label || widgetDef.type,
+        props: { ...(widgetDef.defaultProps || {}) },
+      };
+
+      updateSlots({
+        canvas: {
+          ...slots.canvas,
+          widgets: [...widgets, newWidget],
+        },
+      });
+
+      onSelectWidget(newWidgetId);
+    } catch (err) {
+      console.warn('Could not parse dropped widget definition:', err);
+    }
+  };
+
   return (
     <div
       ref={canvasRef}
       onClick={() => onSelectWidget(null)}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       className={`w-full h-full min-w-[1200px] min-h-[900px] relative transition-colors bg-background ${
         showGrid
           ? 'bg-[radial-gradient(hsl(var(--border))_1px,transparent_1px)] [background-size:20px_20px]'

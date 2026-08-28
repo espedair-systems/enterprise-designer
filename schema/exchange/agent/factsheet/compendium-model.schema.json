@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-artist.inspire/schema/compendium-model.schema.json",
+  "title": "Compendium Knowledge Map Model",
+  "description": "A JSON Schema modelling the CompendiumNG hypermedia concept-/argument-mapping data model (IBIS dialogue mapping). Derived from CompendiumNG's Compendium.dtd, core datamodel classes, and ICoreConstants. A model is a self-contained map project: a tree of views (maps/lists) containing typed nodes connected by typed links, with codes (tags), meetings, and media. Identifiers are string references resolved within the document.",
+  "type": "object",
+  "required": ["rootView", "views", "nodes", "links"],
+  "additionalProperties": false,
+  "properties": {
+    "rootView": {
+      "type": "string",
+      "description": "Identifier of the root view node for this model (DTD: model/@rootview)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the map project."
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema/model version, e.g. the originating Compendium version."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "All distinct nodes in the model, keyed by id and referenced from views/links.",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "links": {
+      "type": "array",
+      "description": "All typed links connecting nodes.",
+      "items": { "$ref": "#/$defs/link" }
+    },
+    "views": {
+      "type": "array",
+      "description": "View memberships: which node appears in which view, and where.",
+      "items": { "$ref": "#/$defs/viewMembership" }
+    },
+    "codes": {
+      "type": "array",
+      "description": "Codes (tags) that can be attached to nodes for categorisation.",
+      "items": { "$ref": "#/$defs/code" }
+    },
+    "meetings": {
+      "type": "array",
+      "description": "Meeting records associated with the map (meeting replay / capture).",
+      "items": { "$ref": "#/$defs/meeting" }
+    },
+    "mediaIndexes": {
+      "type": "array",
+      "description": "Time-coded media references linking nodes to meeting recordings.",
+      "items": { "$ref": "#/$defs/mediaIndex" }
+    },
+    "movies": {
+      "type": "array",
+      "description": "Movies placed on movie-map views (time-based maps).",
+      "items": { "$ref": "#/$defs/movie" }
+    }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp. CompendiumNG stores epoch-millis; serialise as date-time here."
+    },
+    "nodeType": {
+      "type": "string",
+      "description": "The IBIS / structural node type. Values mirror ICoreConstants node-type codes.",
+      "enum": [
+        "general",
+        "list",
+        "map",
+        "issue",
+        "position",
+        "argument",
+        "pro",
+        "con",
+        "decision",
+        "reference",
+        "note",
+        "action",
+        "list-shortcut",
+        "map-shortcut",
+        "issue-shortcut",
+        "position-shortcut",
+        "argument-shortcut",
+        "pro-shortcut",
+        "con-shortcut",
+        "decision-shortcut",
+        "reference-shortcut",
+        "note-shortcut",
+        "movie-map",
+        "movie-map-shortcut",
+        "trashbin",
+        "inbox"
+      ]
+    },
+    "nodeTypeCode": {
+      "type": "integer",
+      "description": "Optional original numeric node-type code from ICoreConstants (0=general,1=list,2=map,3=issue,4=position,5=argument,6=pro,7=con,8=decision,9=reference,10=note,11-20=shortcuts,22=movie-map,32=movie-map-shortcut,51=trashbin,52=inbox)."
+    },
+    "linkType": {
+      "type": "string",
+      "description": "The semantic relationship a link expresses (FROM responds-to/supports/... TO). Values mirror ICoreConstants link-type codes (39-47).",
+      "enum": [
+        "responds-to",
+        "supports",
+        "objects-to",
+        "challenges",
+        "specializes",
+        "expands-on",
+        "related-to",
+        "about",
+        "resolves",
+        "creates"
+      ]
+    },
+    "arrowType": {
+      "type": "string",
+      "description": "Arrowhead rendering for a link.",
+      "enum": ["none", "to", "from", "both"]
+    },
+    "node": {
+      "type": "object",
+      "description": "A node: an idea, question, answer, argument, decision, reference, note, or a container (map/list). Mirrors DTD node element and NodeSummary.",
+      "required": ["id", "type", "author", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "Unique node identifier." },
+        "type": { "$ref": "#/$defs/nodeType" },
+        "typeCode": { "$ref": "#/$defs/nodeTypeCode" },
+        "extendedType": {
+          "type": "string",
+          "description": "Stencil/extended node-type identifier (custom icon/behaviour set)."
+        },
+        "originalId": {
+          "type": "string",
+          "description": "Original id from the source system, preserved across import/export."
+        },
+        "author": { "type": "string", "description": "User who created the node." },
+        "label": { "type": "string", "description": "Short display label." },
+        "detail": {
+          "type": "string",
+          "description": "Primary detail/body text (first detail page)."
+        },
+        "detailPages": {
+          "type": "array",
+          "description": "Additional paged detail text (DTD details/page).",
+          "items": { "$ref": "#/$defs/detailPage" }
+        },
+        "state": {
+          "type": "integer",
+          "description": "Read/seen state flag (0=unread, 1=read, 2=modified-since-read)."
+        },
+        "decisionState": {
+          "type": "string",
+          "description": "Lifecycle state of a decision node (pending → approved → implemented → superseded).",
+          "enum": ["pending", "approved", "implemented", "superseded"]
+        },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" },
+        "lastModificationAuthor": {
+          "type": "string",
+          "description": "User who last modified the node."
+        },
+        "source": {
+          "type": "string",
+          "description": "Reference payload for reference nodes (URL, file path, or comp:// internal reference)."
+        },
+        "image": { "$ref": "#/$defs/image" },
+        "background": {
+          "type": "string",
+          "description": "Background image path/reference for map nodes."
+        },
+        "codeRefs": {
+          "type": "array",
+          "description": "Identifiers of codes (tags) attached to this node.",
+          "items": { "type": "string" }
+        },
+        "shortcutRefs": {
+          "type": "array",
+          "description": "For shortcut nodes: identifiers of the parent node(s) this shortcut points to.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "detailPage": {
+      "type": "object",
+      "required": ["pageNo", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "pageNo": { "type": "integer", "minimum": 0, "description": "Zero-based page index." },
+        "text": { "type": "string", "description": "Page body text." },
+        "author": { "type": "string" },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "image": {
+      "type": "object",
+      "description": "Image reference for reference nodes (DTD image element).",
+      "additionalProperties": false,
+      "properties": {
+        "src": { "type": "string", "description": "Image path or reference." },
+        "width": { "type": "integer", "minimum": 0 },
+        "height": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "link": {
+      "type": "object",
+      "description": "A typed, directed link between two nodes. Mirrors DTD link element and Link.",
+      "required": ["id", "type", "from", "to", "author"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "Unique link identifier." },
+        "type": { "$ref": "#/$defs/linkType" },
+        "from": { "type": "string", "description": "Source node id (the FROM end)." },
+        "to": { "type": "string", "description": "Target node id (the TO end)." },
+        "author": { "type": "string" },
+        "originalId": { "type": "string" },
+        "label": { "type": "string", "description": "Optional link label." },
+        "arrow": { "$ref": "#/$defs/arrowType" },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" },
+        "appearances": {
+          "type": "array",
+          "description": "Per-view visual styling of this link (DTD linkviews/linkview).",
+          "items": { "$ref": "#/$defs/linkAppearance" }
+        }
+      }
+    },
+    "linkAppearance": {
+      "type": "object",
+      "description": "Styling of a link within a specific view.",
+      "additionalProperties": false,
+      "required": ["viewId"],
+      "properties": {
+        "viewId": { "type": "string", "description": "View in which this styling applies." },
+        "labelWrapWidth": { "type": "integer", "minimum": 0 },
+        "fontSize": { "type": "integer", "minimum": 1 },
+        "fontFace": { "type": "string" },
+        "fontStyle": { "type": "integer", "description": "Bitmask: 0=plain,1=bold,2=italic,3=bold+italic." },
+        "foreground": { "type": "string", "description": "Foreground colour (packed RGB integer or hex)." },
+        "background": { "type": "string", "description": "Background colour." },
+        "linkStyle": { "type": "integer", "description": "Curve style (straight/curved/square)." },
+        "linkColour": { "type": "string" },
+        "linkDashed": { "type": "integer", "description": "Dash pattern index (0=solid)." },
+        "linkWeight": { "type": "integer", "minimum": 0, "description": "Line thickness." },
+        "arrowType": { "$ref": "#/$defs/arrowType" },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "viewMembership": {
+      "type": "object",
+      "description": "Placement of a node within a view, including position and per-view appearance (DTD view element, NodePosition).",
+      "required": ["viewId", "nodeId", "x", "y"],
+      "additionalProperties": false,
+      "properties": {
+        "viewId": { "type": "string", "description": "Container view (a node whose type is map/list/movie-map)." },
+        "nodeId": { "type": "string", "description": "The node placed within the view." },
+        "x": { "type": "integer", "description": "X position within the view." },
+        "y": { "type": "integer", "description": "Y position within the view." },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" },
+        "showTags": { "type": "boolean" },
+        "showText": { "type": "boolean" },
+        "showTransclusions": { "type": "boolean" },
+        "showWeight": { "type": "boolean" },
+        "smallIcon": { "type": "boolean" },
+        "hideIcon": { "type": "boolean" },
+        "labelWrapWidth": { "type": "integer", "minimum": 0 },
+        "fontSize": { "type": "integer", "minimum": 1 },
+        "fontFace": { "type": "string" },
+        "fontStyle": { "type": "integer" },
+        "foreground": { "type": "string" },
+        "background": { "type": "string" },
+        "timeSpans": {
+          "type": "array",
+          "description": "Show/hide time spans for nodes on time-based (movie) maps (DTD times/time).",
+          "items": { "$ref": "#/$defs/timeSpan" }
+        }
+      }
+    },
+    "timeSpan": {
+      "type": "object",
+      "description": "A node's appearance window on a time-based map.",
+      "required": ["show", "hide", "atX", "atY"],
+      "additionalProperties": false,
+      "properties": {
+        "show": { "type": "integer", "description": "Time (ms) at which the node appears." },
+        "hide": { "type": "integer", "description": "Time (ms) at which the node disappears." },
+        "atX": { "type": "integer" },
+        "atY": { "type": "integer" }
+      }
+    },
+    "code": {
+      "type": "object",
+      "description": "A code/tag used to categorise nodes (DTD code element, Code).",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "behavior": { "type": "string", "description": "Optional behaviour/grouping metadata for the code." },
+        "author": { "type": "string" },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "meeting": {
+      "type": "object",
+      "description": "A captured/replayable meeting associated with a map view (DTD meeting element, Meeting).",
+      "required": ["id", "mapViewId", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "Meeting reference id." },
+        "mapViewId": { "type": "string", "description": "The map view the meeting is held against." },
+        "name": { "type": "string" },
+        "date": { "$ref": "#/$defs/timestamp" },
+        "status": { "type": "integer", "description": "Current meeting status code." }
+      }
+    },
+    "mediaIndex": {
+      "type": "object",
+      "description": "Time-coded link between a node in a view and a meeting recording (DTD mediaindex element, MediaIndex).",
+      "required": ["nodeId", "viewId", "meetingId", "mediaIndex"],
+      "additionalProperties": false,
+      "properties": {
+        "nodeId": { "type": "string" },
+        "viewId": { "type": "string" },
+        "meetingId": { "type": "string" },
+        "mediaIndex": { "type": "integer", "description": "Offset (ms) into the meeting media for this node." },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "movie": {
+      "type": "object",
+      "description": "A movie placed on a movie-map view (DTD movie element, Movie).",
+      "required": ["id", "viewId", "link", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "viewId": { "type": "string", "description": "The movie-map view this movie belongs to." },
+        "link": { "type": "string", "description": "Movie file path or URL." },
+        "name": { "type": "string" },
+        "startTime": { "type": "integer", "description": "Start offset (ms) on the map timeline." },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" },
+        "properties": {
+          "type": "array",
+          "description": "Time-keyed placement/appearance of the movie (DTD movieproperties).",
+          "items": { "$ref": "#/$defs/movieProperties" }
+        }
+      }
+    },
+    "movieProperties": {
+      "type": "object",
+      "description": "Placement and appearance of a movie at a given time.",
+      "required": ["id", "movieId", "x", "y", "width", "height", "time"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "movieId": { "type": "string" },
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "width": { "type": "integer", "minimum": 0 },
+        "height": { "type": "integer", "minimum": 0 },
+        "transparency": { "type": "number", "minimum": 0, "maximum": 1 },
+        "time": { "type": "integer", "description": "Timeline time (ms) at which these properties apply." },
+        "created": { "$ref": "#/$defs/timestamp" },
+        "lastModified": { "$ref": "#/$defs/timestamp" }
+      }
+    }
+  }
+}

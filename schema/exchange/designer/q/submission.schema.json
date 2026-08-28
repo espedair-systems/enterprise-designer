@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.systems/schemas/q/submission.schema.json",
+  "title": "Enterprise Q Submission Payload Schema",
+  "description": "JSON Schema for audit submissions and responses in DES_BASE.quest_submissions",
+  "type": "object",
+  "required": ["survey_id", "respondent_id", "answers"],
+  "properties": {
+    "id": { "type": "string" },
+    "survey_id": { "type": "string" },
+    "respondent_id": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "verified", "rejected"],
+      "default": "completed"
+    },
+    "score": { "type": "number" },
+    "answers": {
+      "type": "object",
+      "description": "Key-value dictionary mapping question IDs/codes to answered values or arrays",
+      "additionalProperties": true
+    },
+    "submitted_at": { "type": "string", "format": "date-time" }
+  }
+}

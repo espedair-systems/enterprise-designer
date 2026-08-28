@@ -1,0 +1,1920 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-architect.inspire/schema/factsheet-model.schema.json",
+  "title": "FactSheet Extract (ReadMe-derived) Schema",
+  "description": "Schema for a normalized JSON representation of the FactSheet extract documented in the ReadMe tab.",
+  "type": "object",
+  "required": [
+    "factSheets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceFile": {
+          "type": "string"
+        },
+        "exportedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "factSheets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Objective": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/objectiveFactSheet"
+          }
+        },
+        "Platform": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/platformFactSheet"
+          }
+        },
+        "Initiative": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/initiativeFactSheet"
+          }
+        },
+        "BusinessCapability": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/businessCapabilityFactSheet"
+          }
+        },
+        "BusinessContext": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/businessContextFactSheet"
+          }
+        },
+        "Organization": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/organizationFactSheet"
+          }
+        },
+        "Application": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/applicationFactSheet"
+          }
+        },
+        "Interface": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interfaceFactSheet"
+          }
+        },
+        "DataObject": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dataObjectFactSheet"
+          }
+        },
+        "ITComponent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/itComponentFactSheet"
+          }
+        },
+        "Provider": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/providerFactSheet"
+          }
+        },
+        "TechnicalStack": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/technicalStackFactSheet"
+          }
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contractsFactSheet"
+          }
+        }
+      }
+    },
+    "relations": {
+      "type": "object",
+      "description": "Optional relation-sheet projection based on the ReadMe 'Relations to Sheets Mapping' table.",
+      "additionalProperties": false,
+      "properties": {
+        "objectivePlatformRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "platformInitiativeRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "platformBusinessCapabilityRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "platformApplicationRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "platformITComponentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "childParentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "requiresRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "successorRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationOrganizationRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationDataObjectRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationITComponentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationInitiativeRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationInterfaceProviderRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationInterfaceConsumerRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationBusinessContextRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "applicationBusinessCapabilityRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "itComponentTechnologyStackRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "itComponentOrganizationRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "itComponentProviderRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "interfaceDataObjectRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "interfaceITComponentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "businessContextBusinessCapabilityRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeOrganizationRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeBusinessCapabilityRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeITComponentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeBusinessContextRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeProviderRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeBlocksInitiativeRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeInterfaceRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "objectiveBusinessCapabilityRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "organizationObjectiveRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeObjectiveRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "organizationBusinessContextRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeDataObjectRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "initiativeTechnicalStackRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "contractsInitiativeRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "contractsProviderRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        },
+        "contractsITComponentRelation": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationRecord"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "factSheetRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "factSheetRefList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/factSheetRef"
+      }
+    },
+    "emailList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      }
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commonFactSheetFields": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Objective",
+            "Platform",
+            "Initiative",
+            "BusinessCapability",
+            "BusinessContext",
+            "Organization",
+            "Application",
+            "Interface",
+            "DataObject",
+            "ITComponent",
+            "Provider",
+            "TechnicalStack",
+            "contracts"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE"
+          ]
+        },
+        "completion": {
+          "type": "number"
+        },
+        "level": {
+          "type": "integer"
+        },
+        "qualitySeal": {
+          "type": "string",
+          "enum": [
+            "DISABLED",
+            "APPROVED",
+            "BROKEN"
+          ]
+        },
+        "lxState": {
+          "type": "string",
+          "enum": [
+            "BROKEN_QUALITY_SEAL",
+            "DRAFT",
+            "REJECTED",
+            "APPROVED"
+          ]
+        },
+        "permittedReadACL": {
+          "$ref": "#/$defs/stringList"
+        },
+        "permittedWriteACL": {
+          "$ref": "#/$defs/stringList"
+        },
+        "tags:Other tags": {
+          "$ref": "#/$defs/stringList"
+        },
+        "subscriptions:RESPONSIBLE": {
+          "$ref": "#/$defs/emailList"
+        },
+        "subscriptions:RESPONSIBLE:Domain Architect": {
+          "$ref": "#/$defs/emailList"
+        },
+        "subscriptions:RESPONSIBLE:Business Owner": {
+          "$ref": "#/$defs/emailList"
+        },
+        "subscriptions:RESPONSIBLE:Technical Owner": {
+          "$ref": "#/$defs/emailList"
+        },
+        "subscriptions:OBSERVER": {
+          "$ref": "#/$defs/emailList"
+        },
+        "subscriptions:OBSERVER:Technical Owner": {
+          "$ref": "#/$defs/emailList"
+        }
+      }
+    },
+    "objectiveFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Objective"
+            },
+            "projectStatus": {
+              "type": "string",
+              "enum": [
+                "red",
+                "yellow",
+                "green"
+              ]
+            },
+            "objectiveLifecycle:planned": {
+              "type": "string",
+              "format": "date"
+            },
+            "objectiveLifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "objectiveLifecycle:done": {
+              "type": "string",
+              "format": "date"
+            },
+            "objectiveLifecycle:obsolete": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relObjectiveToPlatform": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relObjectiveToBusinessCapability": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relObjectiveToOrganization": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relObjectiveToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "platformFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Platform"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relPlatformToBusinessCapability": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relPlatformToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relPlatformToObjective": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relPlatformToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relPlatformToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "initiativeFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Initiative"
+            },
+            "budgetOpEx": {
+              "type": "number"
+            },
+            "netPresentValue": {
+              "type": "number"
+            },
+            "paybackPeriod": {
+              "type": "number"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "benefitDescription": {
+              "type": "string"
+            },
+            "projectRisk": {
+              "type": "string"
+            },
+            "costDescription": {
+              "type": "string"
+            },
+            "projectStatus": {
+              "type": "string",
+              "enum": [
+                "red",
+                "yellow",
+                "green"
+              ]
+            },
+            "businessValueDescription": {
+              "type": "string"
+            },
+            "budgetCapEx": {
+              "type": "number"
+            },
+            "businessValue": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "projectRiskDescription": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "totalBudget": {
+              "type": "number"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relInitiativeToDataObject": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToPlatform": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToBusinessCapability": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToProvider": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToBusinessContext": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToBlockedInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeTocontracts": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToInterface": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToBlockingInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToObjective": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToTechnicalStack": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInitiativeToOrganization": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "businessCapabilityFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "BusinessCapability"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "lxCatalogStatus": {
+              "type": "string"
+            },
+            "currentMaturity": {
+              "type": "string"
+            },
+            "strategicImportance": {
+              "type": "string"
+            },
+            "targetMaturity": {
+              "type": "string"
+            },
+            "maturityDescription": {
+              "type": "string"
+            },
+            "lxIndustry": {
+              "$ref": "#/$defs/stringList"
+            },
+            "lxEnterpriseDomain": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "AiValueAssessment": {
+              "type": "string"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "signavioGlossaryItemId": {
+              "type": "string"
+            },
+            "lxSapReferenceId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessCapabilityToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relBusinessCapabilityToBusinessContext": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessCapabilityToPlatform": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessCapabilityToObjective": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessCapabilityToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "tags:Differentiation": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "businessContextFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "BusinessContext"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "signavioProcessId": {
+              "type": "string"
+            },
+            "relBusinessContextToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessContextToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessContextToBusinessCapability": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relBusinessContextToOrganization": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "organizationFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Organization"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "signavioGlossaryItemId": {
+              "type": "string"
+            },
+            "relOrganizationToBusinessContext": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relOrganizationToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relOrganizationToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relOrganizationToObjective": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relOrganizationToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "tags:BU Alignment": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "applicationFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Application"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "functionalSuitabilityDescription": {
+              "type": "string"
+            },
+            "technicalSuitabilityDescription": {
+              "type": "string"
+            },
+            "functionalSuitability": {
+              "type": "string"
+            },
+            "technicalSuitability": {
+              "type": "string"
+            },
+            "businessCriticality": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "businessCriticalityDescription": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "orderingState": {
+              "type": "string"
+            },
+            "aggregatedObsolescenceRisk": {
+              "type": "string"
+            },
+            "lxCatalogStatus": {
+              "type": "string"
+            },
+            "lxProductCategory": {
+              "type": "string"
+            },
+            "lxHostingType": {
+              "type": "string"
+            },
+            "lxHostingDescription": {
+              "type": "string"
+            },
+            "lxSsoProvider": {
+              "type": "string"
+            },
+            "lxStatusSSO": {
+              "type": "string"
+            },
+            "lxTimeClassification": {
+              "type": "string"
+            },
+            "lxTimeClassificationDescription": {
+              "type": "string"
+            },
+            "lxSixRClassification": {
+              "type": "string"
+            },
+            "lxSixRRiskClassification": {
+              "type": "string"
+            },
+            "lxSixRTimePriority": {
+              "type": "string"
+            },
+            "lxSixRClassificationDescription": {
+              "type": "string"
+            },
+            "mitigatedObsolescenceRiskPercentage": {
+              "type": "number"
+            },
+            "obsolescenceMissingDataPercentage": {
+              "type": "number"
+            },
+            "unaddressedObsolescenceRiskPercentage": {
+              "type": "number"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "businessHealth": {
+              "type": "string"
+            },
+            "operationalHealth": {
+              "type": "string"
+            },
+            "technicalHealth": {
+              "type": "string"
+            },
+            "applicationLifecycle": {
+              "type": "string"
+            },
+            "AiCapability": {
+              "type": "string"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "signavioGlossaryItemId": {
+              "type": "string"
+            },
+            "lxSiId": {
+              "type": "string"
+            },
+            "lxCatalogId": {
+              "type": "string"
+            },
+            "relApplicationToPlatform": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relApplicationToOrganization": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relProviderApplicationToInterface": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relApplicationToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relApplicationToBusinessCapability": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relApplicationToBusinessContext": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relApplicationToDataObject": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relApplicationToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relConsumerApplicationToInterface": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "tags:Region": {
+              "$ref": "#/$defs/stringList"
+            },
+            "tags:SLA": {
+              "type": "string"
+            },
+            "tags:Product Catalogue": {
+              "type": "string"
+            },
+            "tags:Cloud Transformation": {
+              "type": "string"
+            },
+            "tags:BU Alignment": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "interfaceFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Interface"
+            },
+            "category": {
+              "type": "string"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "interfaceType": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "dataFlowDirection": {
+              "type": "string"
+            },
+            "frequency": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "interfaceIdSequence": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInterfaceToConsumerApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInterfaceToProviderApplication": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relInterfaceToDataObject": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInterfaceToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relInterfaceToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "dataObjectFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "DataObject"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "dataClassification": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "dataClassificationDescription": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relDataObjectToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relDataObjectToInterface": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relDataObjectToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "itComponentFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "ITComponent"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "technicalSuitabilityDescription": {
+              "type": "string"
+            },
+            "technicalSuitability": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "ltlsStatus": {
+              "type": "string"
+            },
+            "lxCatalogStatus": {
+              "type": "string"
+            },
+            "lxTechnologyAssessmentCategory": {
+              "type": "string"
+            },
+            "lxTechnologyAssessment": {
+              "type": "string"
+            },
+            "lxTechnologyAssessmentComment": {
+              "type": "string"
+            },
+            "lxVendorLifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lxVendorLifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "lxVendorLifecycle:extendedVendorSupportAgreement": {
+              "type": "string",
+              "format": "date"
+            },
+            "lxVendorLifecycleComment": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "TAPStatus": {
+              "type": "string"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentToInterface": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentToApplication": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentToOrganization": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentTocontracts": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relITComponentToPlatform": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentToProvider": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relITComponentToTechnologyStack": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relITComponentToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "tags:Logical DC": {
+              "$ref": "#/$defs/stringList"
+            },
+            "tags:Environment": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "providerFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Provider"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "providerCriticalityDescription": {
+              "type": "string"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "providerCriticality": {
+              "type": "string"
+            },
+            "providerQuality": {
+              "type": "string"
+            },
+            "providerQualityDescription": {
+              "type": "string"
+            },
+            "lxCatalogStatus": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relProviderToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relProviderToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relProviderTocontracts": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "technicalStackFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "TechnicalStack"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "alias": {
+              "type": "string"
+            },
+            "lxCatalogStatus": {
+              "type": "string"
+            },
+            "lxTransformationStatus": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "created"
+              ]
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relTechnologyStackToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relTechnicalStackToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "contractsFactSheet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/commonFactSheetFields"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "contracts"
+            },
+            "lifecycle:plan": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseIn": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:active": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:phaseOut": {
+              "type": "string",
+              "format": "date"
+            },
+            "lifecycle:endOfLife": {
+              "type": "string",
+              "format": "date"
+            },
+            "category": {
+              "type": "string"
+            },
+            "contractValue": {
+              "type": "integer"
+            },
+            "contractDescription": {
+              "type": "string"
+            },
+            "externalId": {
+              "type": "string"
+            },
+            "relToChild": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToPredecessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToSuccessor": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relcontractsToProvider": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToParent": {
+              "$ref": "#/$defs/factSheetRef"
+            },
+            "relToRequires": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relcontractsToInitiative": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relcontractsToITComponent": {
+              "$ref": "#/$defs/factSheetRefList"
+            },
+            "relToRequiredBy": {
+              "$ref": "#/$defs/factSheetRefList"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "relationRecord": {
+      "type": "object",
+      "required": [
+        "source",
+        "target"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/factSheetRef"
+        },
+        "target": {
+          "$ref": "#/$defs/factSheetRef"
+        },
+        "sourceType": {
+          "type": "string"
+        },
+        "targetType": {
+          "type": "string"
+        },
+        "relationType": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

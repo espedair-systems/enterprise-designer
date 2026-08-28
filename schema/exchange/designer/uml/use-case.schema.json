@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.systems/schemas/uml/use-case.schema.json",
+  "title": "Enterprise UML Use Case Diagram Schema",
+  "description": "JSON Schema for UML Actors, Use Cases, System Boundaries, and Relationships in DES_BASE.usecase_models",
+  "type": "object",
+  "required": ["title", "actors", "use_cases"],
+  "properties": {
+    "id": { "type": "string" },
+    "app_id": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "system_boundary": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "type": { "type": "string", "enum": ["human", "system", "time"] },
+          "x": { "type": "number" },
+          "y": { "type": "number" }
+        }
+      }
+    },
+    "use_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "preconditions": { "type": "array", "items": { "type": "string" } },
+          "postconditions": { "type": "array", "items": { "type": "string" } },
+          "x": { "type": "number" },
+          "y": { "type": "number" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_id", "target_id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "source_id": { "type": "string" },
+          "target_id": { "type": "string" },
+          "type": { "type": "string", "enum": ["association", "include", "extend", "generalization"] }
+        }
+      }
+    }
+  }
+}

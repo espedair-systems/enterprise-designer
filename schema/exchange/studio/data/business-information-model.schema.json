@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.io/schema/business-information-model",
+  "title": "Business Information Model",
+  "description": "Schema for Business Information Model entities extracted from spreadsheet export.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "entities"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "source_file": {
+      "type": "string"
+    },
+    "sheet_name": {
+      "type": "string"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "key"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_rows",
+        "entity_count",
+        "duplicates_removed"
+      ],
+      "properties": {
+        "source_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entity_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicates_removed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "asset_type",
+          "roles",
+          "relationships"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "asset_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "information_confidentiality_classification": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data_owner_user_name": {
+                "type": "string"
+              },
+              "data_owner_first_name": {
+                "type": "string"
+              },
+              "data_owner_last_name": {
+                "type": "string"
+              },
+              "data_owner_group_name": {
+                "type": "string"
+              },
+              "business_steward_user_name": {
+                "type": "string"
+              },
+              "business_steward_first_name": {
+                "type": "string"
+              },
+              "business_steward_last_name": {
+                "type": "string"
+              },
+              "business_steward_group_name": {
+                "type": "string"
+              },
+              "data_custodian_user_name": {
+                "type": "string"
+              },
+              "data_custodian_first_name": {
+                "type": "string"
+              },
+              "data_custodian_last_name": {
+                "type": "string"
+              },
+              "data_custodian_group_name": {
+                "type": "string"
+              },
+              "data_steward_user_name": {
+                "type": "string"
+              },
+              "data_steward_first_name": {
+                "type": "string"
+              },
+              "data_steward_last_name": {
+                "type": "string"
+              },
+              "data_steward_group_name": {
+                "type": "string"
+              }
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "data_concept_groups_data_concept_name": {
+                  "type": "string"
+                },
+                "data_concept_is_grouped_by_data_concept_name": {
+                  "type": "string"
+                },
+                "data_concept_is_grouped_by_data_domain_name": {
+                  "type": "string"
+                },
+                "data_domain_groups_data_concept_name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

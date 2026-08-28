@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://espedair.io/schemas/data-artist.schema.json",
+  "title": "Data Artist Canonical Model Schema",
+  "description": "JSON Schema specification for Data Artist multi-tenant data architecture models, medallion tiers, and multi-paradigm tables.",
+  "type": "object",
+  "required": ["version", "workspace"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": ["1.0.0", "1.1.0"]
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "workspace": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "industry": { "type": "string" }
+      }
+    },
+    "subject_areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "workspace_id": { "type": "string" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "executive_sponsor": { "type": "string" },
+          "governance_tier": { "type": "string" }
+        }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "workspace_id": { "type": "string" },
+          "subject_area_id": { "type": "string" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "domain_lead": { "type": "string" },
+          "criticality": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "conceptual_entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain_id": { "type": "string" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "definition": { "type": "string" },
+          "steward_role": { "type": "string" },
+          "confidentiality_class": { "type": "string" },
+          "business_artist_req_id": { "type": "string" }
+        }
+      }
+    },
+    "physical_schemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "schema_name", "medallion_tier"],
+        "properties": {
+          "id": { "type": "string" },
+          "database_system": { "type": "string" },
+          "schema_name": { "type": "string" },
+          "medallion_tier": { "type": "string", "enum": ["GOLD", "SILVER", "BRONZE", "SOURCE", "EXTERNAL", "UNASSIGNED"] },
+          "target_environment": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "physical_tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "physical_schema_id", "table_name", "model_type"],
+        "properties": {
+          "id": { "type": "string" },
+          "physical_schema_id": { "type": "string" },
+          "table_name": { "type": "string" },
+          "model_type": {
+            "type": "string",
+            "enum": [
+              "hub", "satellite", "lsat", "link", "pit", "bridge",
+              "fact", "dimension", "outrigger", "junk_dim", "role_playing",
+              "base_table", "view", "materialized_view",
+              "anchor", "tie", "knot",
+              "semantic_concept", "master_data", "reference_data"
+            ]
+          },
+          "row_count_estimate": { "type": "integer" },
+          "storage_bytes": { "type": "integer" },
+          "design_patterns": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "description": { "type": "string" },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "column_name", "data_type"],
+              "properties": {
+                "id": { "type": "string" },
+                "column_name": { "type": "string" },
+                "data_type": { "type": "string" },
+                "is_nullable": { "type": "boolean" },
+                "is_primary_key": { "type": "boolean" },
+                "is_foreign_key": { "type": "boolean" },
+                "is_business_key": { "type": "boolean" },
+                "is_pii": { "type": "boolean" },
+                "foreign_key_target_table": { "type": "string" },
+                "foreign_key_target_column": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "code": { "type": "string" },
+          "title": { "type": "string" },
+          "owner_role": { "type": "string" },
+          "status": { "type": "string" },
+          "output_port": { "type": "string" },
+          "tier": { "type": "string" }
+        }
+      }
+    }
+  }
+}

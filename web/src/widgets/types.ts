@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type WidgetCategory = 'display' | 'input' | 'visual' | 'container' | 'action';
+export type WidgetCategory = 'layouts' | 'display' | 'input' | 'visual' | 'container' | 'action';
 
 export interface WidgetPropField {
   name: string;

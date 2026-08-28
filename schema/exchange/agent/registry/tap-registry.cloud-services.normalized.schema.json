@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-artist.inspire/schema/tap-registry.cloud-services.normalized.schema.json",
+  "title": "TAP Registry Cloud Services (AWS & GCP) Normalized Schema",
+  "description": "Constrained TAP Registry schema restricted to AWS and GCP cloud services. Derived from tap-registry.normalized.schema.json.",
+  "type": "object",
+  "required": ["metadata", "records"],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["sourceFile", "sheetName", "exportedAt"],
+      "additionalProperties": true,
+      "properties": {
+        "sourceFile": { "type": "string", "minLength": 1 },
+        "sheetName": { "type": "string", "minLength": 1 },
+        "exportedAt": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "sourceJson": { "type": "string" },
+        "outputFormat": { "type": "string" }
+      }
+    },
+    "columnMapping": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cloudServiceRecord" }
+    }
+  },
+  "$defs": {
+    "numOrString": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string" }
+      ]
+    },
+    "cloudServiceRecord": {
+      "type": "object",
+      "required": ["name", "cloud_provider", "publisher", "category", "type"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "cloud_provider": {
+          "type": "string",
+          "enum": ["AWS", "GCP"],
+          "description": "Cloud service provider. Restricted to Amazon Web Services (AWS) or Google Cloud Platform (GCP)."
+        },
+        "publisher": {
+          "type": "string",
+          "enum": ["Amazon", "Amazon Web Services", "Google", "Google Cloud"]
+        },
+        "business_justification": { "type": "string" },
+        "trm_phase": {
+          "type": "string",
+          "enum": ["Approved", "Approved with Constraints", "Emerging", "Contained", "Retired", "N/A"]
+        },
+        "constraints_summary": { "type": "string" },
+        "constraints_detail": { "type": "string" },
+        "owner": { "type": "string" },
+        "status_change_date": { "$ref": "#/$defs/numOrString" },
+        "category": {
+          "type": "string",
+          "const": "Cloud Services",
+          "description": "Fixed category for cloud provider services in this constrained dataset."
+        },
+        "subcategory": { "type": "string" },
+        "trm_request": { "type": "string" },
+        "software_product": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["Cloud Service", "Software"]
+        },
+        "updated_by": { "$ref": "#/$defs/numOrString" },
+        "hardware_product": { "type": "string" },
+        "tags": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "created": { "$ref": "#/$defs/numOrString" },
+        "created_by": { "$ref": "#/$defs/numOrString" },
+        "investment_direction": { "type": "string" },
+        "is_new_product": {
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "integer", "enum": [0, 1] },
+            { "type": "string", "enum": ["0", "1", "true", "false", "TRUE", "FALSE"] }
+          ]
+        },
+        "lifecycle_exist": {
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "integer", "enum": [0, 1] },
+            { "type": "string", "enum": ["0", "1", "true", "false", "TRUE", "FALSE"] }
+          ]
+        },
+        "operating_system": { "type": "string" },
+        "other_categories": { "type": "string" },
+        "status_approver": { "type": "string" },
+        "updated": { "$ref": "#/$defs/numOrString" },
+        "updates": { "$ref": "#/$defs/numOrString" }
+      }
+    }
+  }
+}

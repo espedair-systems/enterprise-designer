@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://enterprise-artist.internal/schemas/financials.schema.json",
+  "title": "Financials & FinOps Dataset Schema",
+  "description": "JSON Schema for Workday 3-Stage Budgets, AWS Cost & Usage Reports (CUR), GCP Cloud Billing, and Application TCO datasets.",
+  "type": "object",
+  "required": [
+    "metadata",
+    "fiscalYears",
+    "costCenters",
+    "workdayBudgets",
+    "awsCurBilling",
+    "gcpBilling",
+    "applicationTcos",
+    "costAllocationRules"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["organization", "currency", "exportedAt", "erpSystem"],
+      "properties": {
+        "organization": { "type": "string" },
+        "currency": { "type": "string", "enum": ["AUD", "USD", "EUR", "GBP", "NZD", "SGD"] },
+        "exportedAt": { "type": "string", "format": "date-time" },
+        "erpSystem": { "type": "string" },
+        "cloudProviders": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "fiscalYears": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "startDate", "endDate", "isClosed"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "isClosed": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "costCenters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "name", "managerName", "annualBudget"],
+        "properties": {
+          "id": { "type": "string" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "parentId": { "type": "string" },
+          "divisionId": { "type": "string" },
+          "managerName": { "type": "string" },
+          "annualBudget": { "type": "number", "minimum": 0 },
+          "headcount": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "workdayBudgets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "fiscalYearId",
+          "costCenterId",
+          "targetName",
+          "totalAllocated",
+          "capexAmount",
+          "opexAmount",
+          "committedAmount",
+          "actualIncurred",
+          "actionIfExceeded",
+          "status",
+          "lineItems"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "fiscalYearId": { "type": "string" },
+          "costCenterId": { "type": "string" },
+          "targetName": { "type": "string" },
+          "totalAllocated": { "type": "number", "minimum": 0 },
+          "capexAmount": { "type": "number", "minimum": 0 },
+          "opexAmount": { "type": "number", "minimum": 0 },
+          "committedAmount": { "type": "number", "minimum": 0 },
+          "actualIncurred": { "type": "number", "minimum": 0 },
+          "rtbAmount": { "type": "number", "minimum": 0 },
+          "ctbAmount": { "type": "number", "minimum": 0 },
+          "actionIfExceeded": { "type": "string", "enum": ["stop", "warn", "ignore"] },
+          "status": { "type": "string", "enum": ["draft", "submitted", "approved", "rejected", "closed"] },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "costPool", "itTower", "allocated", "committed", "actual"],
+              "properties": {
+                "id": { "type": "string" },
+                "costPool": { "type": "string" },
+                "itTower": { "type": "string" },
+                "allocated": { "type": "number", "minimum": 0 },
+                "committed": { "type": "number", "minimum": 0 },
+                "actual": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "awsCurBilling": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "accountId",
+          "accountName",
+          "organization",
+          "environment",
+          "monthlyCost",
+          "annualRunRate",
+          "primaryService",
+          "savingsPlanCoveragePct",
+          "tagCompliancePct",
+          "services"
+        ],
+        "properties": {
+          "accountId": { "type": "string" },
+          "accountName": { "type": "string" },
+          "organization": { "type": "string" },
+          "environment": { "type": "string", "enum": ["Production", "Staging", "Development", "Shared Services"] },
+          "monthlyCost": { "type": "number", "minimum": 0 },
+          "annualRunRate": { "type": "number", "minimum": 0 },
+          "primaryService": { "type": "string" },
+          "savingsPlanCoveragePct": { "type": "number", "minimum": 0, "maximum": 100 },
+          "tagCompliancePct": { "type": "number", "minimum": 0, "maximum": 100 },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["serviceName", "category", "monthlySpend", "percentage"],
+              "properties": {
+                "serviceName": { "type": "string" },
+                "category": { "type": "string" },
+                "monthlySpend": { "type": "number", "minimum": 0 },
+                "percentage": { "type": "number", "minimum": 0, "maximum": 100 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "gcpBilling": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "projectId",
+          "billingAccountId",
+          "environment",
+          "monthlyCost",
+          "annualRunRate",
+          "primaryService",
+          "cudCoveragePct",
+          "services"
+        ],
+        "properties": {
+          "projectId": { "type": "string" },
+          "billingAccountId": { "type": "string" },
+          "environment": { "type": "string", "enum": ["Production", "Staging", "Development", "Data Analytics"] },
+          "monthlyCost": { "type": "number", "minimum": 0 },
+          "annualRunRate": { "type": "number", "minimum": 0 },
+          "primaryService": { "type": "string" },
+          "cudCoveragePct": { "type": "number", "minimum": 0, "maximum": 100 },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["serviceName", "category", "monthlySpend", "percentage"],
+              "properties": {
+                "serviceName": { "type": "string" },
+                "category": { "type": "string" },
+                "monthlySpend": { "type": "number", "minimum": 0 },
+                "percentage": { "type": "number", "minimum": 0, "maximum": 100 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "applicationTcos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "applicationId",
+          "applicationName",
+          "division",
+          "costCenterId",
+          "cloudCost",
+          "licenseCost",
+          "hardwareCost",
+          "laborCost",
+          "supportCost",
+          "totalTco",
+          "rtbPercentage",
+          "ctbPercentage",
+          "timeStrategy",
+          "businessValueScore"
+        ],
+        "properties": {
+          "applicationId": { "type": "string" },
+          "applicationName": { "type": "string" },
+          "division": { "type": "string" },
+          "costCenterId": { "type": "string" },
+          "cloudCost": { "type": "number", "minimum": 0 },
+          "licenseCost": { "type": "number", "minimum": 0 },
+          "hardwareCost": { "type": "number", "minimum": 0 },
+          "laborCost": { "type": "number", "minimum": 0 },
+          "supportCost": { "type": "number", "minimum": 0 },
+          "totalTco": { "type": "number", "minimum": 0 },
+          "rtbPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+          "ctbPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+          "timeStrategy": { "type": "string", "enum": ["INVEST", "TOLERATE", "MIGRATE", "ELIMINATE"] },
+          "businessValueScore": { "type": "number", "minimum": 0, "maximum": 100 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "costAllocationRules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "sourceCostCenterId", "poolAmount", "metricDriver", "allocations"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "sourceCostCenterId": { "type": "string" },
+          "poolAmount": { "type": "number", "minimum": 0 },
+          "metricDriver": { "type": "string" },
+          "allocations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["targetId", "targetName", "percentage", "amount"],
+              "properties": {
+                "targetId": { "type": "string" },
+                "targetName": { "type": "string" },
+                "percentage": { "type": "number", "minimum": 0, "maximum": 100 },
+                "amount": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

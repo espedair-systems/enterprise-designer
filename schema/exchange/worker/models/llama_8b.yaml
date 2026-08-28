@@ -1,0 +1,29 @@
+# ==============================================================================
+# Llama-3.1-8B-Instruct + Qwen3-Embedding-0.6B Profile Configuration (1024d)
+# ==============================================================================
+profile: APRA-Sources
+
+# Filtered list of file extensions to index
+allowed_extensions:
+  - pdf
+  - docx
+  - xlsx
+  - xls
+  - xml
+  - xsd
+  - sql
+
+# Target watch directory
+watch_dir: .
+
+# Embedding Engine parameters
+model_name: Qwen3-Embedding-0.6B
+model_path: ~/.mcp-ag/models/Qwen3-Embedding-0.6B/model.onnx
+tokenizer_path: ~/.mcp-ag/models/Qwen3-Embedding-0.6B/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_qwen3_06b_lancedb
+dimension: Dim1024
+log_level: info
+
+# Host LLM Model Configuration (Local RTX 3090 GGUF)
+llm_name: Llama-3.1-8B-Instruct
+llm_model_path: ~/.mcp-ag/models/Llama-3.1-8B-Instruct/Meta-Llama-3.1-8B-Instruct-Q8_0.gguf

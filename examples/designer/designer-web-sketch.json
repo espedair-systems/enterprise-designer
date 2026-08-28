@@ -1,0 +1,271 @@
+{
+  "$schema": "https://espedair.systems/schemas/designer/sketch-schema.json",
+  "version": "1.0.0",
+  "title": "Enterprise Designer React Web SPA Architecture Sketch",
+  "description": "Comprehensive wireframe sketch of the Enterprise Designer Single Page Application (web/) covering the 5-slot workbench, Activity Rail, Hierarchical Toolbox, Top Menu Bar, Center Multi-Mode Canvas, Resizable Inspector, Bottom Console Tray, and Centered Modals.",
+  "target": "react_web",
+  "canvas": {
+    "width": 1600,
+    "height": 1020,
+    "gridSize": 20
+  },
+  "elements": [
+    {
+      "id": "frame-main-window",
+      "type": "frame",
+      "title": "Enterprise Designer Web SPA Main Viewport (1560 × 980)",
+      "x": 20,
+      "y": 20,
+      "width": 1560,
+      "height": 980,
+      "color": "border-primary/50 bg-background text-foreground shadow-2xl",
+      "props": {
+        "component": "StudioShell.tsx",
+        "description": "Outer flex container hosting Activity Rail, Left Tool Panel, and Main Workspace Column."
+      }
+    },
+    {
+      "id": "slot-1-activity-rail",
+      "type": "card",
+      "title": "Slot 1: Full-Height Activity Rail (w-14 / w-56)",
+      "x": 30,
+      "y": 30,
+      "width": 60,
+      "height": 960,
+      "color": "border-sidebar-border bg-sidebar text-sidebar-foreground",
+      "props": {
+        "component": "ActivityRail.tsx",
+        "topHeader": "ED Logo & PanelLeftClose Collapse Button",
+        "railItems": [
+          "Dashboard (dashboard_projects)",
+          "Projects (projects_table)",
+          "UI Designer (visual_canvas / ui_sketch)",
+          "Data Designer (er_modeler / lineage_dag / sql_editor)",
+          "Agent Designer (workflow_graph)"
+        ],
+        "bottomFooter": "Settings Modal Trigger, Eye Inspector Trigger, PanelLeftOpen Button, ED Provenance Badge (DES_BASE:8088)"
+      }
+    },
+    {
+      "id": "slot-2-left-toolbox",
+      "type": "card",
+      "title": "Slot 2: Left Panel: UI Toolbox & UI Navigation Hierarchy (w-72)",
+      "x": 100,
+      "y": 30,
+      "width": 280,
+      "height": 960,
+      "color": "border-border bg-card/90",
+      "props": {
+        "component": "SidebarSlot.tsx + ToolboxPanel.tsx",
+        "topModeSwitcher": "UI Toolbox vs UI Navigation segmented toggle switch",
+        "resizing": "Right splitter handle (220px - 580px, double-click reset to 288px)",
+        "search": "Single unified search input (Filter components & hierarchy...)",
+        "accordionMode": "Concertina (Only 1 active section expanded at a time)",
+        "collapseAllAction": "ChevronsDownUp Collapse All button",
+        "uiToolboxHierarchy": [
+          "Layouts: Designer SPA, Worker TUI",
+          "Display: Data Table, Metric Card, JSON Tree, Key-Value List",
+          "Input: Text Input, Select Dropdown, Switch Toggle, Date Picker, Number Input",
+          "Visual: Bar Chart, Line Chart, Donut Chart, Heatmap Grid",
+          "Containers: Tabs Container, Card Container, Modal Container",
+          "Actions: Action Button, Icon Button, Dropdown Button"
+        ],
+        "uiNavigationHierarchy": [
+          "Pages & Canvases: Visual Canvas Grid, Wireframe & Sketch, Dashboard, Projects Registry, ER Modeler, Lineage DAG, SQL Console, Recent Activity, Global Search, Project Scaffold",
+          "Modals & Drawers: UI Location Context Inspector Modal, Studio Settings & Autosave Modal, Schema Migration Planner Modal, New Application Scaffolder",
+          "Dialogs & Alerts: Delete Project Confirmation Dialog, Reset Layout Confirmation Dialog, CR Generation Banner, Autosave Sync Alert",
+          "Trays & Panels: Query Runner Console, SQL Logs Stream, Test Runner Console, Interactive Terminal, Right Properties Inspector"
+        ]
+      }
+    },
+    {
+      "id": "slot-3-top-menu-bar",
+      "type": "card",
+      "title": "Slot 3: Top Menu Bar (5 Domain Modes & Live Status)",
+      "x": 390,
+      "y": 30,
+      "width": 1180,
+      "height": 56,
+      "color": "border-border bg-card/90 backdrop-blur-md",
+      "props": {
+        "component": "TopMenuBar.tsx",
+        "domainModes": [
+          "1. Dashboard (Overview & Metrics)",
+          "2. Projects (Apps Registry & Builds)",
+          "3. UI Designer (Grid & Wireframe Sketch)",
+          "4. Data Designer (ER Schemas & Lineage)",
+          "5. Agent Designer (Autonomous Workflows)"
+        ],
+        "rightActions": [
+          "Active Project Pill: Fleet Logistics Studio (DES_BASE:8088)",
+          "Autosave Status Indicator (Autosave: Active / Saving...)",
+          "Antigravity UI Location Eye Inspector Modal Trigger",
+          "Panel Toggles: Left Tool Panel, Bottom Console, Right Inspector"
+        ]
+      }
+    },
+    {
+      "id": "slot-4-center-canvas",
+      "type": "card",
+      "title": "Slot 4: Center Multi-Mode Canvas Viewport",
+      "x": 390,
+      "y": 96,
+      "width": 860,
+      "height": 620,
+      "color": "border-primary/30 bg-background/90",
+      "props": {
+        "component": "CanvasSlot.tsx",
+        "activeCanvasModes": [
+          "visual_canvas: VisualCanvasGrid.tsx (Drag-and-Drop 20px grid, Live Preview, Zoom)",
+          "ui_sketch: WireframeSketchCanvas.tsx (Penpot/Figma mockups, JSON Schema import/export)",
+          "dashboard_projects: ProjectsDashboardCanvas.tsx (PostgreSQL DES_BASE.designer_apps table)",
+          "recent_activity: RecentActivityCanvas.tsx (Audit log of layout saves & CRs)",
+          "global_search: GlobalSearchCanvas.tsx (Artifact, schema table & query explorer)",
+          "er_modeler: ERModelerCanvas.tsx (Relational ER diagrams & DDL)",
+          "lineage_dag: LineageDAGView.tsx (Column-Level Lineage DAG & flow graphs)",
+          "sql_editor: SqlEditorView.tsx (AST SQL query console & EXPLAIN visualizer)",
+          "project_scaffold: ProjectScaffoldCanvas.tsx (Hexagonal code generator & binary build)"
+        ]
+      }
+    },
+    {
+      "id": "canvas-widget-1-header",
+      "type": "card",
+      "title": "Canvas Widget 1: Fleet Operational Metrics Summary (HeaderCard)",
+      "x": 420,
+      "y": 120,
+      "width": 800,
+      "height": 90,
+      "color": "border-primary/40 bg-primary/5",
+      "props": {
+        "type": "HeaderCard",
+        "metric": "99.98% SLA",
+        "status": "Optimal",
+        "dataSource": "DES_BASE.designer_apps"
+      }
+    },
+    {
+      "id": "canvas-widget-2-table",
+      "type": "table",
+      "title": "Canvas Widget 2: Active Autonomous Vehicle Grid (DataTable)",
+      "x": 420,
+      "y": 224,
+      "width": 800,
+      "height": 340,
+      "color": "border-cyan-500/40 bg-cyan-500/5",
+      "props": {
+        "type": "DataTable",
+        "dataSource": "postgres.DES_BASE.designer_apps",
+        "columns": ["ID", "NAME", "SLUG", "TYPE", "STATUS", "UPDATED_AT"],
+        "rowsPerPage": 5
+      }
+    },
+    {
+      "id": "canvas-widget-3-button",
+      "type": "button",
+      "title": "Canvas Widget 3: Deploy Fleet Telemetry Stream (ActionButton)",
+      "x": 1000,
+      "y": 574,
+      "width": 220,
+      "height": 38,
+      "color": "border-primary bg-primary text-primary-foreground font-bold shadow-xs",
+      "props": {
+        "type": "ActionButton",
+        "variant": "primary",
+        "action": "trigger_workflow",
+        "targetPort": 8088
+      }
+    },
+    {
+      "id": "slot-5-right-inspector",
+      "type": "card",
+      "title": "Slot 5: Resizable Properties Inspector (240px - 600px)",
+      "x": 1260,
+      "y": 96,
+      "width": 310,
+      "height": 620,
+      "color": "border-border bg-card/90",
+      "props": {
+        "component": "SidebarSlot.tsx + PropertyInspector.tsx",
+        "resizing": "Left splitter handle (240px - 600px, double-click reset to 300px)",
+        "tabStrip": ["Properties Inspector", "Data Bindings", "Validation Rules", "Event Handlers"],
+        "activeFields": [
+          "Widget ID: widget-table",
+          "Component Type: DataTable",
+          "Title: Active Autonomous Vehicle Grid",
+          "Width & Height: 800 × 340px",
+          "X & Y Position: (420, 224)",
+          "Data Source: postgres.DES_BASE.designer_apps",
+          "Pagination: 5 rows per page",
+          "Status Pill Coloring: Active=Emerald, Draft=Amber, Published=Cyan"
+        ]
+      }
+    },
+    {
+      "id": "slot-6-bottom-console",
+      "type": "card",
+      "title": "Slot 6: Bottom Console Tray (Query Runner, AST Logs, Telemetry)",
+      "x": 390,
+      "y": 726,
+      "width": 1180,
+      "height": 264,
+      "color": "border-border bg-card/95 font-mono",
+      "props": {
+        "component": "BottomTray.tsx + QueryRunnerPanel.tsx",
+        "tabStrip": ["Query Runner (AST SQL)", "SQL Logs", "Test Runner", "Terminal"],
+        "activeQuery": "SELECT id, name, slug, status FROM DES_BASE.designer_apps ORDER BY updated_at DESC;",
+        "executionStats": "Status: 200 OK • Rows: 3 • Latency: 1.42ms • Engine: PostgreSQL pgx/v5 (Pool: 25)"
+      }
+    },
+    {
+      "id": "modal-eye-inspector",
+      "type": "frame",
+      "title": "Centered Modal: Antigravity UI Location Inspector & CR Creator",
+      "x": 480,
+      "y": 200,
+      "width": 640,
+      "height": 560,
+      "color": "border-primary/60 bg-card/95 backdrop-blur-xl shadow-2xl z-50",
+      "props": {
+        "component": "UILocationInspectorModal.tsx",
+        "features": [
+          "Backdrop blur overlay and centered layout",
+          "Active App: Fleet Logistics Studio (fleet-logistics)",
+          "Active View ID: visual_canvas",
+          "Primary React Component: web/src/canvas/VisualCanvasGrid.tsx",
+          "Backend Handler: internal/adapters/inbound/http/handlers.go",
+          "Authoritative Database Schema: PostgreSQL DES_BASE (Port 8088)",
+          "Actions: Copy UI Location Context, Create CR (cr-000x.md)"
+        ]
+      }
+    },
+    {
+      "id": "modal-settings-autosave",
+      "type": "frame",
+      "title": "Centered Modal: Studio Settings & PostgreSQL DES_BASE Autosave",
+      "x": 520,
+      "y": 240,
+      "width": 560,
+      "height": 480,
+      "color": "border-border bg-card/95 backdrop-blur-xl shadow-2xl z-50",
+      "props": {
+        "component": "SlotConfigModal.tsx",
+        "features": [
+          "Autosave to PostgreSQL (DES_BASE) Toggle: Active",
+          "Debounce Sync Interval Selector: 5s, 10s, 30s, 60s",
+          "Slot Layout DSL Customizer (Rail, Menu, Sidebars, Canvas, Tray)",
+          "Connection Pooling: 25 Max Open, 5 Idle, 15m Lifetime"
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "author": "Lead Architect",
+    "app_id": "fleet-logistics",
+    "database_schema": "DES_BASE",
+    "project_path": "/run/media/jonk/Workspace/ESPEDAIR/designer/enterprise-designer",
+    "frontend_source": "web/src/"
+  },
+  "created_at": "2026-08-28T10:53:00Z",
+  "updated_at": "2026-08-28T10:53:00Z"
+}

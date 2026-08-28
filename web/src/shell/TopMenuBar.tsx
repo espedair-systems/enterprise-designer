@@ -1,30 +1,85 @@
 import React, { useState } from 'react';
 import {
-  Save,
-  Download,
-  Sliders,
-  ChevronDown,
+  LayoutDashboard,
+  FolderCode,
+  Layout,
+  Database,
+  Bot,
+  HelpCircle,
+  FileCode2,
   PanelLeftClose,
   PanelLeftOpen,
   PanelRightClose,
   PanelRightOpen,
   PanelBottomClose,
   PanelBottomOpen,
+  Eye,
+  Save,
 } from 'lucide-react';
 import { useLayout } from './LayoutContext';
-import { AppExportModal } from '../components/export/AppExportModal';
+import { DesignerDomainMode } from './types';
+import { UILocationInspectorModal } from '../components/common/UILocationInspectorModal';
+
+interface DomainModeTab {
+  id: DesignerDomainMode;
+  label: string;
+  subLabel: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const DOMAIN_MODE_TABS: DomainModeTab[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    subLabel: 'Overview & Metrics',
+    icon: LayoutDashboard,
+  },
+  {
+    id: 'projects',
+    label: 'Project Registry',
+    subLabel: 'Apps Registry & Builds',
+    icon: FolderCode,
+  },
+  {
+    id: 'ui_designer',
+    label: 'UI Designer',
+    subLabel: 'Grid & Wireframe Sketch',
+    icon: Layout,
+  },
+  {
+    id: 'data_designer',
+    label: 'Data Designer',
+    subLabel: 'ER Schemas & Lineage',
+    icon: Database,
+  },
+  {
+    id: 'agent_designer',
+    label: 'Agent Designer',
+    subLabel: 'Autonomous Workflows',
+    icon: Bot,
+  },
+  {
+    id: 'q_designer',
+    label: 'Q Designer',
+    subLabel: 'Surveys & Questionnaires',
+    icon: HelpCircle,
+  },
+  {
+    id: 'schema_designer',
+    label: 'Schema & API Designer',
+    subLabel: 'JSON Schema & OpenAPI 3.1',
+    icon: FileCode2,
+  },
+];
 
 export const TopMenuBar: React.FC = () => {
   const {
-    slots,
     currentApp,
-    appsList,
-    selectApp,
     isSaving,
-    saveLayoutToBackend,
-    environment,
-    setEnvironment,
-    setIsConfigModalOpen,
+    autosaveEnabled,
+    lastSavedTime,
+    domainMode,
+    setDomainMode,
     leftSidebarOpen,
     toggleLeftSidebar,
     rightSidebarOpen,
@@ -33,215 +88,158 @@ export const TopMenuBar: React.FC = () => {
     toggleBottomTray,
   } = useLayout();
 
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  const [showAppDropdown, setShowAppDropdown] = useState<boolean>(false);
-  const [showExportModal, setShowExportModal] = useState<boolean>(false);
-
-  const handleSave = async () => {
-    await saveLayoutToBackend();
-  };
+  const [showInspectorModal, setShowInspectorModal] = useState<boolean>(false);
 
   return (
     <header
-      className="h-12 bg-card border-b border-border px-3 flex items-center justify-between select-none z-20 backdrop-blur-md shrink-0 shadow-xs"
+      className="h-14 bg-card border-b border-border px-3.5 flex items-center justify-between select-none z-30 shrink-0 shadow-xs backdrop-blur-md"
       aria-label="Top Menu Bar"
     >
-      {/* Left: App Title & Dropdown Menus */}
-      <div className="flex items-center gap-3">
-        {/* App Switcher */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setShowAppDropdown(!showAppDropdown)}
-            className="flex items-center gap-2 px-2.5 py-1 bg-muted hover:bg-muted/80 border border-border rounded-lg text-xs font-semibold text-foreground transition-colors shadow-xs"
-          >
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="max-w-[140px] truncate">{currentApp ? currentApp.name : 'Fleet Logistics Studio'}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-          </button>
+      {/* ── Left: 4 Domain Mode Badges (Flush Left-Aligned with Canvas) ── */}
+      <div className="flex items-center gap-2 min-w-0 flex-1 overflow-x-auto scrollbar-none py-1">
+        {DOMAIN_MODE_TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = domainMode === tab.id;
 
-          {showAppDropdown && (
-            <div className="absolute left-0 top-full mt-1 w-64 bg-card border border-border rounded-xl shadow-2xl py-1 z-50">
-              <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider border-b border-border">
-                Switch Studio / Agent App
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setDomainMode(tab.id)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                isActive
+                  ? 'bg-primary text-primary-foreground shadow-xs font-bold'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              }`}
+            >
+              <Icon
+                className={`w-4 h-4 shrink-0 transition-transform ${
+                  isActive ? 'text-primary-foreground scale-105' : 'text-muted-foreground'
+                }`}
+              />
+              <div className="text-left leading-none">
+                <div
+                  className={`text-xs font-semibold ${
+                    isActive ? 'text-primary-foreground font-bold' : 'text-foreground'
+                  }`}
+                >
+                  {tab.label}
+                </div>
+                <div
+                  className={`text-[9px] mt-0.5 ${
+                    isActive ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                  }`}
+                >
+                  {tab.subLabel}
+                </div>
               </div>
-              <div className="max-h-60 overflow-y-auto">
-                {appsList.length === 0 ? (
-                  <div className="px-3 py-2 text-xs text-muted-foreground">No applications registered</div>
-                ) : (
-                  appsList.map((app) => (
-                    <button
-                      key={app.id}
-                      type="button"
-                      onClick={() => {
-                        selectApp(app);
-                        setShowAppDropdown(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-muted transition-colors ${
-                        currentApp?.id === app.id ? 'text-primary bg-primary/10 font-semibold' : 'text-foreground'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-medium">{app.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{app.app_type} • {app.slug}</p>
-                      </div>
-                      <span className="text-[10px] uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
-                        {app.status}
-                      </span>
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Right: Active Project Badge, Autosave Status, Eye Inspector & Panel Toggles ── */}
+      <div className="flex items-center gap-2 shrink-0 ml-3">
+        {/* Active Project & Schema Badge */}
+        {currentApp && (
+          <div
+            onClick={() => setDomainMode('dashboard')}
+            className="hidden xl:flex items-center gap-2 px-2.5 py-1 bg-muted/60 hover:bg-muted border border-border rounded-xl text-xs font-semibold text-foreground transition-all cursor-pointer shadow-2xs"
+            title="Active Enterprise Project (Click to view Projects Dashboard)"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="max-w-[140px] truncate font-bold">{currentApp.name}</span>
+            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-card text-primary border border-border font-bold">
+              DES_BASE
+            </span>
+          </div>
+        )}
+
+        {/* Autosave Status Indicator */}
+        <div
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-muted/40 border border-border/80 rounded-xl text-[11px] font-mono"
+          title={
+            autosaveEnabled
+              ? lastSavedTime
+                ? `Autosaved to DES_BASE at ${lastSavedTime.toLocaleTimeString()}`
+                : 'Autosave to DES_BASE is Active'
+              : 'Autosave Disabled (Manage in Settings)'
+          }
+        >
+          {isSaving ? (
+            <>
+              <Save className="w-3 h-3 text-primary animate-spin" />
+              <span className="text-primary font-semibold">Saving...</span>
+            </>
+          ) : autosaveEnabled ? (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-muted-foreground">Autosave</span>
+            </>
+          ) : (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              <span className="text-muted-foreground">Manual</span>
+            </>
           )}
         </div>
 
-        {/* Customizable Top Dropdown Menus */}
-        <div className="hidden md:flex items-center gap-1">
-          {slots.menu_bar.menus.map((menu) => (
-            <div key={menu} className="relative">
-              <button
-                type="button"
-                onClick={() => setActiveMenu(activeMenu === menu ? null : menu)}
-                className={`px-2.5 py-1 text-xs rounded-lg hover:bg-muted transition-colors ${
-                  activeMenu === menu ? 'bg-muted text-primary font-semibold' : 'text-muted-foreground'
-                }`}
-              >
-                {menu}
-              </button>
-
-              {activeMenu === menu && (
-                <div
-                  className="absolute left-0 top-full mt-1 w-48 bg-card border border-border rounded-xl shadow-xl py-1 z-50 text-xs text-foreground"
-                  onMouseLeave={() => setActiveMenu(null)}
-                >
-                  <div className="px-3 py-1.5 hover:bg-muted cursor-pointer flex items-center justify-between">
-                    <span>New Component</span>
-                    <span className="text-[10px] text-muted-foreground">⌘N</span>
-                  </div>
-                  <div className="px-3 py-1.5 hover:bg-muted cursor-pointer flex items-center justify-between">
-                    <span>Export Schema DDL</span>
-                    <span className="text-[10px] text-muted-foreground">⌘E</span>
-                  </div>
-                  <div className="w-full h-px bg-border my-1" />
-                  <div
-                    className="px-3 py-1.5 hover:bg-muted cursor-pointer flex items-center justify-between text-primary font-semibold"
-                    onClick={() => {
-                      setIsConfigModalOpen(true);
-                      setActiveMenu(null);
-                    }}
-                  >
-                    <span>Configure Settings...</span>
-                    <Sliders className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Center: Active App Context, Schema & Environment Badge */}
-      <div className="hidden lg:flex items-center gap-2.5 bg-muted/60 border border-border px-3 py-1.5 rounded-lg">
-        <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          {currentApp ? currentApp.name : 'EA Designer Studio'}
-        </span>
-
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-card text-primary border border-border font-bold">
-          DES_BASE
-        </span>
-
-        <div className="w-px h-3.5 bg-border" />
-
-        {/* Environment Badge */}
-        <div className="flex items-center gap-1 px-1.5 py-0.5 bg-card rounded text-[11px] font-semibold border border-border">
-          <span className="text-muted-foreground text-[10px]">ENV:</span>
-          {(['DEV', 'TEST', 'STAGING', 'PROD'] as const).map((env) => (
-            <button
-              key={env}
-              type="button"
-              onClick={() => setEnvironment(env)}
-              className={`px-1.5 py-0.2 rounded text-[10px] font-bold transition-all ${
-                environment === env
-                  ? env === 'PROD'
-                    ? 'bg-rose-600 text-white'
-                    : 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {env}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Right: Actions & Panel Toggles */}
-      <div className="flex items-center gap-2">
-        {/* Export Binary / Release Pipeline */}
+        {/* Antigravity UI Location Inspector Button */}
         <button
           type="button"
-          onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-muted hover:bg-muted/80 text-foreground text-xs font-semibold rounded-lg border border-border shadow-xs transition-colors"
-          title="Compile Standalone Binary or Package Source"
+          onClick={() => setShowInspectorModal(true)}
+          className="p-2 rounded-xl bg-muted/50 hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border/60 hover:border-primary/30 transition-all cursor-pointer shadow-2xs"
+          title="Inspect UI Location (Eye Tool - Copy context or create CR)"
         >
-          <Download className="w-3.5 h-3.5 text-primary" />
-          <span>Export Binary</span>
-        </button>
-
-        {/* Save Layout DSL */}
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground text-xs font-semibold rounded-lg shadow-xs transition-colors"
-        >
-          <Save className={`w-3.5 h-3.5 ${isSaving ? 'animate-spin' : ''}`} />
-          <span>{isSaving ? 'Saving...' : 'Save DSL'}</span>
+          <Eye className="w-4 h-4" />
         </button>
 
         {/* Panel Toggles */}
-        <div className="flex items-center gap-1 bg-muted border border-border p-1 rounded-lg">
-          <button
-            type="button"
-            onClick={toggleLeftSidebar}
-            className={`p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-card transition-colors ${
-              leftSidebarOpen ? 'text-primary bg-card shadow-xs' : ''
-            }`}
-            title={leftSidebarOpen ? 'Collapse Left Sidebar' : 'Expand Left Sidebar'}
-          >
-            {leftSidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
-          </button>
+        <div className="flex items-center gap-0.5 bg-muted/60 border border-border p-0.5 rounded-xl">
+          {domainMode !== 'dashboard' && domainMode !== 'projects' && (
+            <button
+              type="button"
+              onClick={toggleLeftSidebar}
+              className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer ${
+                leftSidebarOpen ? 'text-primary bg-card shadow-xs' : ''
+              }`}
+              title={leftSidebarOpen ? 'Collapse Left Tool Panel' : 'Expand Left Tool Panel'}
+            >
+              {leftSidebarOpen ? <PanelLeftClose className="w-3.5 h-3.5" /> : <PanelLeftOpen className="w-3.5 h-3.5" />}
+            </button>
+          )}
 
           <button
             type="button"
             onClick={toggleBottomTray}
-            className={`p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-card transition-colors ${
+            className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer ${
               bottomTrayOpen ? 'text-primary bg-card shadow-xs' : ''
             }`}
             title={bottomTrayOpen ? 'Collapse Bottom Console' : 'Expand Bottom Console'}
           >
-            {bottomTrayOpen ? <PanelBottomClose className="w-4 h-4" /> : <PanelBottomOpen className="w-4 h-4" />}
+            {bottomTrayOpen ? <PanelBottomClose className="w-3.5 h-3.5" /> : <PanelBottomOpen className="w-3.5 h-3.5" />}
           </button>
 
           <button
             type="button"
             onClick={toggleRightSidebar}
-            className={`p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-card transition-colors ${
+            className={`p-1.5 rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer ${
               rightSidebarOpen ? 'text-primary bg-card shadow-xs' : ''
             }`}
             title={rightSidebarOpen ? 'Collapse Right Inspector' : 'Expand Right Inspector'}
           >
-            {rightSidebarOpen ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+            {rightSidebarOpen ? <PanelRightClose className="w-3.5 h-3.5" /> : <PanelRightOpen className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
 
-      {/* Export Release Centered Modal */}
-      <AppExportModal
-        isOpen={showExportModal}
-        onClose={() => setShowExportModal(false)}
+      {/* Centered UI Context & CR Inspector Modal */}
+      <UILocationInspectorModal
+        isOpen={showInspectorModal}
+        onClose={() => setShowInspectorModal(false)}
       />
     </header>
   );
 };
+
+export default TopMenuBar;

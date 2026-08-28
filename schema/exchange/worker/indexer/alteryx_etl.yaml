@@ -1,0 +1,20 @@
+# Alteryx ETL Project Profile Configuration
+profile: AlteryxETL
+allowed_extensions:
+  - yxmd
+  - yxmc
+  - sql
+  - ddl
+  - xlsx
+  - xls
+watch_directories:
+  - workflows/
+  - sql/
+  - mappings/
+model_name: nomic-embed-text-v1.5
+model_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/model.onnx
+tokenizer_path: ~/.mcp-ag/models/nomic-embed-text-v1.5/tokenizer.json
+db_path: ~/.mcp-ag/data/local_artifacts_lancedb
+dimension: Full768
+watch_dir: .
+log_level: info

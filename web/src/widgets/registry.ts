@@ -30,6 +30,36 @@ import {
 } from './definitions/ActionWidgets';
 
 export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
+  // APPLICATION LAYOUTS
+  DesignerSPALayout: {
+    type: 'DesignerSPALayout',
+    label: 'Designer SPA',
+    category: 'layouts',
+    icon: 'Monitor',
+    description: '5-Slot React Web Workbench (Activity Rail, Toolbox, Top Bar, Canvas, Inspector, Bottom Tray)',
+    defaultWidth: 920,
+    defaultHeight: 560,
+    defaultProps: { layoutTarget: 'react_web' },
+    schema: [
+      { name: 'title', label: 'Layout Title', type: 'string', defaultValue: 'Enterprise Designer SPA' },
+    ],
+    render: CardContainerWidget,
+  },
+  WorkerTUILayout: {
+    type: 'WorkerTUILayout',
+    label: 'Worker TUI',
+    category: 'layouts',
+    icon: 'Terminal',
+    description: 'Bubbletea Terminal User Interface (base tui navigation, ASCII tables, live telemetry stream)',
+    defaultWidth: 880,
+    defaultHeight: 500,
+    defaultProps: { layoutTarget: 'bubbletea_tui' },
+    schema: [
+      { name: 'title', label: 'Layout Title', type: 'string', defaultValue: 'Enterprise Designer Worker TUI' },
+    ],
+    render: CardContainerWidget,
+  },
+
   // DATA DISPLAY
   DataTable: {
     type: 'DataTable',
