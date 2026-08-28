@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Workflow,
   Search,
@@ -7,10 +7,11 @@ import {
   Maximize2,
   Box,
   RotateCcw,
-  Move,
   GripHorizontal,
-  Hand,
+  RefreshCw,
+  FileCode2,
 } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface GraphNode {
   id: string;
@@ -18,71 +19,135 @@ interface GraphNode {
   type: string;
   x: number;
   y: number;
+  parentId?: string;
   properties: Array<{ name: string; type: string; required?: boolean; format?: string }>;
 }
 
-const INITIAL_NODES: GraphNode[] = [
-  {
+const parseSchemaToGraphNodes = (schemaPayload: any): GraphNode[] => {
+  if (!schemaPayload || typeof schemaPayload !== 'object') {
+    return [
+      {
+        id: 'root',
+        title: 'Empty Schema',
+        type: 'object',
+        x: 60,
+        y: 120,
+        properties: [{ name: 'id', type: 'string', required: true }],
+      },
+    ];
+  }
+
+  const nodes: GraphNode[] = [];
+  const rootTitle = schemaPayload.title || 'RootSchema';
+  const rootProps: Array<{ name: string; type: string; required?: boolean; format?: string }> = [];
+  const requiredList: string[] = Array.isArray(schemaPayload.required) ? schemaPayload.required : [];
+
+  const rawProps = schemaPayload.properties || {};
+  let childIndex = 0;
+
+  Object.entries(rawProps).forEach(([propName, propDef]: [string, any]) => {
+    const pType = propDef?.type || (propDef?.$ref ? '$ref' : 'any');
+    const pFormat = propDef?.format;
+    const isReq = requiredList.includes(propName);
+
+    rootProps.push({
+      name: propName,
+      type: pType,
+      required: isReq,
+      format: pFormat,
+    });
+
+    // If property is a nested object with properties, create a child node
+    if (pType === 'object' && propDef?.properties) {
+      const childProps: Array<{ name: string; type: string; required?: boolean; format?: string }> = [];
+      const childReq = Array.isArray(propDef.required) ? propDef.required : [];
+      Object.entries(propDef.properties).forEach(([cName, cDef]: [string, any]) => {
+        childProps.push({
+          name: cName,
+          type: cDef?.type || 'any',
+          required: childReq.includes(cName),
+          format: cDef?.format,
+        });
+      });
+
+      nodes.push({
+        id: `node-${propName}`,
+        title: propDef.title || propName,
+        type: 'object',
+        x: 480,
+        y: 60 + childIndex * 260,
+        parentId: 'root',
+        properties: childProps.length > 0 ? childProps : [{ name: 'data', type: 'object' }],
+      });
+      childIndex++;
+    } else if (pType === 'array' && propDef?.items) {
+      nodes.push({
+        id: `node-${propName}`,
+        title: `${propName} (List)`,
+        type: 'array',
+        x: 480,
+        y: 60 + childIndex * 260,
+        parentId: 'root',
+        properties: [
+          { name: 'items', type: propDef.items.type || 'string', format: propDef.items.format },
+          { name: 'minItems', type: String(propDef.minItems ?? 0) },
+        ],
+      });
+      childIndex++;
+    }
+  });
+
+  // Check for $defs or definitions
+  const defs = schemaPayload.$defs || schemaPayload.definitions || {};
+  let defIndex = 0;
+  Object.entries(defs).forEach(([defName, defObj]: [string, any]) => {
+    const defProps: Array<{ name: string; type: string; required?: boolean; format?: string }> = [];
+    const defReq = Array.isArray(defObj?.required) ? defObj.required : [];
+    if (defObj?.properties) {
+      Object.entries(defObj.properties).forEach(([pName, pObj]: [string, any]) => {
+        defProps.push({
+          name: pName,
+          type: pObj?.type || 'string',
+          required: defReq.includes(pName),
+          format: pObj?.format,
+        });
+      });
+    }
+
+    nodes.push({
+      id: `def-${defName}`,
+      title: `${defName} ($defs)`,
+      type: '$defs',
+      x: 900,
+      y: 100 + defIndex * 240,
+      parentId: nodes.length > 0 ? nodes[0].id : 'root',
+      properties: defProps.length > 0 ? defProps : [{ name: 'id', type: 'string' }],
+    });
+    defIndex++;
+  });
+
+  // Always put root node first
+  nodes.unshift({
     id: 'root',
-    title: 'TelematicsEvent (Root)',
-    type: 'object',
+    title: `${rootTitle} (Root)`,
+    type: schemaPayload.type || 'object',
     x: 60,
     y: 120,
-    properties: [
-      { name: 'event_id', type: 'string', format: 'uuid', required: true },
-      { name: 'vin', type: 'string', required: true },
-      { name: 'odometer_km', type: 'number', required: true },
-      { name: 'status', type: 'enum', required: true },
-      { name: 'telemetry_packet', type: 'object' },
-      { name: 'active_dtc_codes', type: 'array' },
-    ],
-  },
-  {
-    id: 'telemetry_packet',
-    title: 'TelemetryPacket',
-    type: 'object',
-    x: 480,
-    y: 60,
-    properties: [
-      { name: 'latitude', type: 'number', required: true },
-      { name: 'longitude', type: 'number', required: true },
-      { name: 'battery_soc_pct', type: 'integer' },
-      { name: 'speed_kmh', type: 'number' },
-    ],
-  },
-  {
-    id: 'active_dtc_codes',
-    title: 'ActiveDTCCodes (List)',
-    type: 'array',
-    x: 480,
-    y: 340,
-    properties: [
-      { name: 'items', type: 'string', format: 'dtc-code' },
-      { name: 'minItems', type: '0' },
-      { name: 'uniqueItems', type: 'true' },
-    ],
-  },
-  {
-    id: 'vehicle_profile',
-    title: 'VehicleProfile ($defs)',
-    type: '$defs',
-    x: 880,
-    y: 140,
-    properties: [
-      { name: 'make', type: 'string' },
-      { name: 'model', type: 'string' },
-      { name: 'powertrain', type: 'enum' },
-      { name: 'gross_weight_kg', type: 'number' },
-    ],
-  },
-];
+    properties: rootProps.length > 0 ? rootProps : [{ name: 'id', type: 'string', required: true }],
+  });
+
+  return nodes;
+};
 
 export const SchemaGraphVisualizerCanvas: React.FC = () => {
+  const [schemasList, setSchemasList] = useState<any[]>([]);
+  const [selectedSchemaId, setSelectedSchemaId] = useState<string>('');
+  const [loading, setLoading] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>('root');
-  const [nodes, setNodes] = useState<GraphNode[]>(INITIAL_NODES);
+  const [nodes, setNodes] = useState<GraphNode[]>([]);
 
   // Dragging state for nodes
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
@@ -91,6 +156,53 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
   // Panning state for canvas background
   const [isPanning, setIsPanning] = useState(false);
   const panStartPos = useRef<{ mouseX: number; mouseY: number; panX: number; panY: number } | null>(null);
+
+  const fetchSchemas = async () => {
+    try {
+      setLoading(true);
+      const res = await api.listSchemas();
+      const list = Array.isArray(res)
+        ? res
+        : res && typeof res === 'object' && Array.isArray((res as any).schemas)
+        ? (res as any).schemas
+        : [];
+      setSchemasList(list);
+
+      if (list.length > 0) {
+        const active = list[0];
+        setSelectedSchemaId(active.id);
+        const parsed = parseSchemaToGraphNodes(active.raw_payload_json);
+        setNodes(parsed);
+      } else {
+        setNodes(
+          parseSchemaToGraphNodes({
+            title: 'Enterprise Schema',
+            type: 'object',
+            properties: { id: { type: 'string' }, name: { type: 'string' } },
+          })
+        );
+      }
+    } catch (err) {
+      console.error('Failed to load schema graph AST:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSchemas();
+  }, []);
+
+  const handleSelectSchema = (id: string) => {
+    setSelectedSchemaId(id);
+    const target = schemasList.find((s) => s.id === id);
+    if (target) {
+      const parsed = parseSchemaToGraphNodes(target.raw_payload_json);
+      setNodes(parsed);
+      setPan({ x: 0, y: 0 });
+      setZoom(1);
+    }
+  };
 
   const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation();
@@ -109,7 +221,6 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
   };
 
   const handleCanvasMouseDown = (e: React.MouseEvent) => {
-    // Only pan if clicking canvas background (not inside node)
     if ((e.target as HTMLElement).closest('.schema-node-card')) return;
     setIsPanning(true);
     panStartPos.current = {
@@ -167,27 +278,26 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
     };
   }, [draggingNodeId, isPanning, zoom]);
 
-  const getNodeCenter = (id: string) => {
+  const getNodeBounds = (id: string) => {
     const node = nodes.find((n) => n.id === id);
-    if (!node) return { x: 0, y: 0, rightX: 0, leftX: 0 };
+    if (!node) return { rightX: 0, centerY: 0, leftX: 0 };
     return {
-      x: node.x + 144,
-      y: node.y + 80,
       rightX: node.x + 288,
       leftX: node.x,
+      centerY: node.y + 60,
     };
   };
 
-  const rootCenter = getNodeCenter('root');
-  const telemetryCenter = getNodeCenter('telemetry_packet');
-  const dtcCenter = getNodeCenter('active_dtc_codes');
-  const profileCenter = getNodeCenter('vehicle_profile');
-
   const handleResetLayout = () => {
-    setNodes(INITIAL_NODES);
+    const target = schemasList.find((s) => s.id === selectedSchemaId);
+    if (target) {
+      setNodes(parseSchemaToGraphNodes(target.raw_payload_json));
+    }
     setPan({ x: 0, y: 0 });
     setZoom(1);
   };
+
+  const safeNodes = Array.isArray(nodes) ? nodes : [];
 
   return (
     <div className="flex flex-col h-full bg-background text-foreground select-none overflow-hidden relative">
@@ -201,17 +311,35 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
             <h1 className="text-sm font-bold text-foreground flex items-center gap-2">
               2D Schema Graph AST Visualizer
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                Interactive Canvas (Drag Nodes & Pan)
+                Dynamic AST Topology
               </span>
             </h1>
             <p className="text-[11px] text-muted-foreground">
-              Click and drag node headers to reposition elements across the canvas, or drag canvas to pan.
+              Dynamic 2D node graphs parsed in real-time from active JSON Schema definitions and AST models.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="relative w-56">
+          {/* Active Schema Switcher */}
+          {schemasList.length > 0 && (
+            <div className="flex items-center gap-1.5 bg-card border border-border rounded-xl px-2.5 py-1 text-xs">
+              <FileCode2 className="w-3.5 h-3.5 text-primary" />
+              <select
+                value={selectedSchemaId}
+                onChange={(e) => handleSelectSchema(e.target.value)}
+                className="bg-transparent text-foreground font-semibold text-xs focus:outline-none cursor-pointer"
+              >
+                {schemasList.map((s) => (
+                  <option key={s.id} value={s.id} className="bg-card text-foreground">
+                    {s.title} ({s.dialect || 'Draft 2020-12'})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="relative w-48">
             <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-muted-foreground" />
             <input
               type="text"
@@ -229,6 +357,14 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Layout</span>
+          </button>
+
+          <button
+            onClick={fetchSchemas}
+            title="Refresh Schema Registry"
+            className="p-1.5 rounded-xl bg-card hover:bg-muted text-muted-foreground hover:text-foreground border border-border transition"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           </button>
 
           <div className="flex items-center bg-card border border-border rounded-xl p-0.5 text-xs">
@@ -280,37 +416,32 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
         >
           {/* Dynamic SVG Connecting Bezier Lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
-            {/* Line: root -> telemetry_packet */}
-            <path
-              d={`M ${rootCenter.rightX} ${rootCenter.y - 20} C ${rootCenter.rightX + 60} ${rootCenter.y - 20}, ${telemetryCenter.leftX - 60} ${telemetryCenter.y}, ${telemetryCenter.leftX} ${telemetryCenter.y}`}
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="2.5"
-              strokeDasharray="4 2"
-            />
-            {/* Line: root -> active_dtc_codes */}
-            <path
-              d={`M ${rootCenter.rightX} ${rootCenter.y + 40} C ${rootCenter.rightX + 60} ${rootCenter.y + 40}, ${dtcCenter.leftX - 60} ${dtcCenter.y}, ${dtcCenter.leftX} ${dtcCenter.y}`}
-              fill="none"
-              stroke="#10b981"
-              strokeWidth="2.5"
-            />
-            {/* Line: telemetry_packet -> vehicle_profile */}
-            <path
-              d={`M ${telemetryCenter.rightX} ${telemetryCenter.y} C ${telemetryCenter.rightX + 60} ${telemetryCenter.y}, ${profileCenter.leftX - 60} ${profileCenter.y}, ${profileCenter.leftX} ${profileCenter.y}`}
-              fill="none"
-              stroke="#a855f7"
-              strokeWidth="2.5"
-            />
+            {safeNodes
+              .filter((n) => n.parentId)
+              .map((n) => {
+                const parent = getNodeBounds(n.parentId!);
+                const child = getNodeBounds(n.id);
+                return (
+                  <path
+                    key={`edge-${n.parentId}-${n.id}`}
+                    d={`M ${parent.rightX} ${parent.centerY} C ${parent.rightX + 80} ${parent.centerY}, ${child.leftX - 80} ${child.centerY}, ${child.leftX} ${child.centerY}`}
+                    fill="none"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth="2.5"
+                    strokeDasharray={n.type === '$defs' ? '4 2' : undefined}
+                  />
+                );
+              })}
           </svg>
 
           {/* Draggable Node Cards */}
-          {nodes.map((node) => {
+          {safeNodes.map((node) => {
             const isSelected = selectedNodeId === node.id;
+            const properties = Array.isArray(node.properties) ? node.properties : [];
             const matchesSearch =
               !searchQuery ||
               node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              node.properties.some((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+              properties.some((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
             return (
               <div
@@ -339,7 +470,7 @@ export const SchemaGraphVisualizerCanvas: React.FC = () => {
 
                 {/* Node Properties List */}
                 <div className="p-2.5 space-y-1 divide-y divide-border/60 text-xs">
-                  {node.properties.map((p, idx) => (
+                  {properties.map((p, idx) => (
                     <div
                       key={idx}
                       className="pt-1 first:pt-0 flex items-center justify-between text-[11px]"
